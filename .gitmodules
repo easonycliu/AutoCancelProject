@@ -1,0 +1,12 @@
+[submodule "autocancel_exp"]
+	path = autocancel_exp
+	url = https://github.com/liuyc1515/AutoCancelExperiment.git
+[submodule "autocancel_java_code"]
+	path = autocancel_java_code
+	url = https://github.com/liuyc1515/AutoCancelJavaLib.git
+[submodule "elasticsearch"]
+	path = elasticsearch
+	url = https://github.com/liuyc1515/elasticsearch.git
+[submodule "toy_gradle_project"]
+	path = toy_gradle_project
+	url = https://github.com/liuyc1515/ToyGradleProject.git
