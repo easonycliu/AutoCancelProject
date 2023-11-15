@@ -7,6 +7,9 @@
 [submodule "elasticsearch"]
 	path = elasticsearch
 	url = https://github.com/liuyc1515/elasticsearch.git
+[submodule "solr"]
+	path = solr
+	url = https://github.com/liuyc1515/solr.git
 [submodule "toy_gradle_project"]
 	path = toy_gradle_project
 	url = https://github.com/liuyc1515/ToyGradleProject.git
