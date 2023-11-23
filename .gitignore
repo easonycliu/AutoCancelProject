@@ -1,4 +1,8 @@
 /autocancel_c_code
 /FlameGraph
 /hive
+
+/scripts/data/*
+/scripts/logs/*
+
 .bash_history
