@@ -3,7 +3,9 @@
 /hive
 
 /scripts/data/*
+!/scripts/data/.gitkeep
 /scripts/logs/*
+!/scripts/logs/.gitkeep
 
 .cache
 .config
