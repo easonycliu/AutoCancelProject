@@ -5,4 +5,7 @@
 /scripts/data/*
 /scripts/logs/*
 
+.cache
+.config
+
 .bash_history
