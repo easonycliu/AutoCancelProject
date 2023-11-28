@@ -117,8 +117,6 @@ indices.breaker.total.limit: 100%
 indices.breaker.request.limit: 100%
 indices.breaker.request.overhead: 0.5
 
-thread_pool.write.size: 3
-
 # Allow other nodes to join the cluster from anywhere
 # Connections are encrypted and mutually authenticated
 transport.host: 0.0.0.0

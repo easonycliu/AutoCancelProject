@@ -11,11 +11,11 @@ services:
       - elastic
     volumes:
       - $AUTOCANCEL_HOME/elasticsearch/build/distribution/local/elasticsearch-8.9.0-SNAPSHOT:/usr/share/elasticsearch
-      - $AUTOCANCEL_HOME/autocancel_exp/elasticsearch_exp/cluster/data/single_node:/usr/share/elasticsearch/data
+      - $AUTOCANCEL_HOME/scripts/data/elasticsearch:/usr/share/elasticsearch/data
       - $AUTOCANCEL_HOME/scripts/cases/c1_cache_evict/es_config.yml:/usr/share/elasticsearch/config/elasticsearch.yml
       - $AUTOCANCEL_HOME/autocancel_exp/elasticsearch_exp/cluster/config/java.policy:/usr/share/elasticsearch/config/java.policy
       - $AUTOCANCEL_HOME/autocancel_exp/elasticsearch_exp/cluster/log/single_node:/usr/share/elasticsearch/logs
-      - $AUTOCANCEL_HOME/scripts/logs/${CASE}_${START_TIME}:/tmp/autocancel
+      - $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${CASE}_${START_TIME}:/tmp/autocancel
       # - $AUTOCANCEL_HOME/autocancel_exp/elasticsearch_exp/cluster/config/log4j2.properties:/usr/share/elasticsearch/config/log4j2.properties
     environment:
       - TZ=Asia/Shanghai
@@ -26,10 +26,10 @@ services:
       resources:
         limits:
           cpus: '8.00'
-    blkio_config:
-      device_read_bps:
-        - path: /dev/sda
-          rate: '12mb'
+    # blkio_config:
+    #   device_read_bps:
+    #     - path: /dev/sda
+    #       rate: '12mb'
 
 networks:
   elastic: 
