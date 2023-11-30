@@ -27,7 +27,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '2.00'
+          cpus: '4.00'
           # memory: '2G'
     # blkio_config:
     #   device_read_bps:

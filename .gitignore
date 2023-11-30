@@ -1,6 +1,7 @@
 /autocancel_c_code
 /FlameGraph
 /hive
+/solr-bench
 
 /scripts/data/*
 !/scripts/data/.gitkeep

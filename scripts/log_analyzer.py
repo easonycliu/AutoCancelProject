@@ -80,8 +80,8 @@ if __name__ == "__main__":
 
             lib_log_list = []
             for index, row in lib_log_df.iterrows():
-                if row["Times"] == 1:
-                    continue
+                # if row["Times"] == 1:
+                #     continue
                 lib_log_list.append(row.values)
 
             lib_log_list = lib_log_list[IGNORE_HEAD:-IGNORE_TAIL]
