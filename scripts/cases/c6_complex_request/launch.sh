@@ -44,20 +44,20 @@ function run_once {
     DEFAULT_POLICY=$1 PREDICT_PROGRESS=$2 CANCEL_ENABLE=$3 AUTOCANCEL_LOG=$4 docker compose -f $AUTOCANCEL_HOME/scripts/cases/c6_complex_request/docker_config.yml down
 }
 
-# run_once base_policy false true base_wo_predict $client_num
-# sleep 10
+run_once base_policy false true base_wo_predict $client_num
+sleep 10
 
-# run_once base_policy true true base_w_predict $client_num
-# sleep 10
+run_once base_policy true true base_w_predict $client_num
+sleep 10
 
-# run_once multi_objective_policy false true moo_wo_predict $client_num
-# sleep 10
+run_once multi_objective_policy false true moo_wo_predict $client_num
+sleep 10
 
 run_once multi_objective_policy true true moo_w_predict $client_num
 sleep 10
 
-# run_once multi_objective_policy true false wo_cancel $client_num
-# sleep 10
+run_once multi_objective_policy true false wo_cancel $client_num
+sleep 10
 
-# run_once multi_objective_policy true false normal $client_num
-# sleep 10
+run_once multi_objective_policy true false normal $client_num
+sleep 10
