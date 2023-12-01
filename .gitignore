@@ -8,6 +8,12 @@
 /scripts/logs/*
 !/scripts/logs/.gitkeep
 
+/scripts/microbenchmark/solr-bench/SolrNightlyBenchmarksWorkDirectory
+/scripts/microbenchmark/solr-bench/target
+/scripts/microbenchmark/solr-bench/suites/results
+/scripts/microbenchmark/solr-bench/suites/ecommerce-events.json.gz
+/scripts/microbenchmark/solr-bench/apache-zookeeper-3.8.3-bin.tar.gz
+
 note
 
 .cache
