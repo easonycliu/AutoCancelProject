@@ -4,7 +4,7 @@ set -e
 set -m
 
 export AUTOCANCEL_HOME=$(git rev-parse --show-toplevel)
-export MICROBENCHMARK=read_overhead
+export MICROBENCHMARK=rally_benchmark
 export START_TIME=$(date +%Y_%m_%d_%H_%M_%S)
 export START_DATE=$(date +%Y_%m_%d)
 

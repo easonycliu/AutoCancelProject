@@ -2,6 +2,7 @@
 /FlameGraph
 /hive
 /solr-bench
+/cilantro
 
 /scripts/data/*
 !/scripts/data/.gitkeep

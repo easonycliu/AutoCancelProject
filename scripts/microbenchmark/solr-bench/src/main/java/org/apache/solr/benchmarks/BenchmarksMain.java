@@ -110,7 +110,7 @@ public class BenchmarksMain {
 										", 95th latency: " + controlledExecutor.stats.getPercentile(95));
 						((List)results.get("query-benchmarks").get(benchmark.name)).add(
 								Util.map("threads", threads, "50th", controlledExecutor.stats.getPercentile(50), "90th", controlledExecutor.stats.getPercentile(90),
-										"95th", controlledExecutor.stats.getPercentile(95), "mean", controlledExecutor.stats.getMean(), "total-queries", controlledExecutor.stats.getN(), "total-time", time));
+										"95th", controlledExecutor.stats.getPercentile(95), "99th", stats.getPercentile(99), "mean", controlledExecutor.stats.getMean(), "total-queries", controlledExecutor.stats.getN(), "total-time", time));
 					if (detailedQueryStatsListener != null) {
 						Map detailedStats = (Map) results.get("query-benchmarks").computeIfAbsent("detailed-stats", key -> new LinkedHashMap<>());
 						//add the detailed stats (per query in the input query file) collected by the listener
