@@ -14,6 +14,3 @@
 	path = solr
 	url = git@github.com:liuyc1515/solr.git
     branch = autocancel
-[submodule "toy_gradle_project"]
-	path = toy_gradle_project
-	url = git@github.com:liuyc1515/ToyGradleProject.git
