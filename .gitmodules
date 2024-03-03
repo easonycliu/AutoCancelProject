@@ -1,19 +1,19 @@
 [submodule "autocancel_exp"]
 	path = autocancel_exp
-	url = https://github.com/liuyc1515/AutoCancelExperiment.git
+	url = git@github.com:liuyc1515/AutoCancelExperiment.git
     branch = experiment
 [submodule "autocancel_java_code"]
 	path = autocancel_java_code
-	url = https://github.com/liuyc1515/AutoCancelJavaLib.git
+	url = git@github.com:liuyc1515/AutoCancelJavaLib.git
     branch = experiment
 [submodule "elasticsearch"]
 	path = elasticsearch
-	url = https://github.com/liuyc1515/elasticsearch.git
+	url = git@github.com:liuyc1515/elasticsearch.git
     branch = autocancel
 [submodule "solr"]
 	path = solr
-	url = https://github.com/liuyc1515/solr.git
+	url = git@github.com:liuyc1515/solr.git
     branch = autocancel
 [submodule "toy_gradle_project"]
 	path = toy_gradle_project
-	url = https://github.com/liuyc1515/ToyGradleProject.git
+	url = git@github.com:liuyc1515/ToyGradleProject.git
