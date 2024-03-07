@@ -13,23 +13,22 @@ client_num=5
 sudo sysctl -w vm.max_map_count=262144
 
 if [ ! -d "$AUTOCANCEL_HOME/scripts/logs/$START_DATE" ]; then
-    sudo mkdir $AUTOCANCEL_HOME/scripts/logs/$START_DATE
+    mkdir $AUTOCANCEL_HOME/scripts/logs/$START_DATE
 fi
 
-sudo mkdir $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${CASE}_${START_TIME}
-sudo chown -R 1000:1000 $AUTOCANCEL_HOME/scripts/logs
+mkdir $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${CASE}_${START_TIME}
 
 if [ ! -f "$AUTOCANCEL_HOME/autocancel_exp/elasticsearch_exp/query/boolean_search.json" ]; then
     docker run --rm --net=host -v $AUTOCANCEL_HOME/autocancel_exp/elasticsearch_exp:/root -w /root easonliu12138/es_py_env:v1.1 /root/performance_issues/complex_boolean_operations.py 1000 boolean_search.json
 fi
 
 function run_once {
-    DEFAULT_POLICY=$1 PREDICT_PROGRESS=$2 CANCEL_ENABLE=$3 AUTOCANCEL_LOG=$4 docker compose -f $AUTOCANCEL_HOME/scripts/cases/c4_complex_boolean/docker_config.yml down
+    USER_ID=$(id -u) GROUP_ID=$(id -g) DEFAULT_POLICY=$1 PREDICT_PROGRESS=$2 CANCEL_ENABLE=$3 AUTOCANCEL_LOG=$4 docker compose -f $AUTOCANCEL_HOME/scripts/cases/c4_complex_boolean/docker_config.yml down
 
     docker stop single_node || true
     docker rm single_node || true
 
-    DEFAULT_POLICY=$1 PREDICT_PROGRESS=$2 CANCEL_ENABLE=$3 AUTOCANCEL_LOG=$4 docker compose -f $AUTOCANCEL_HOME/scripts/cases/c4_complex_boolean/docker_config.yml up &
+    USER_ID=$(id -u) GROUP_ID=$(id -g) DEFAULT_POLICY=$1 PREDICT_PROGRESS=$2 CANCEL_ENABLE=$3 AUTOCANCEL_LOG=$4 docker compose -f $AUTOCANCEL_HOME/scripts/cases/c4_complex_boolean/docker_config.yml up &
     sleep 90
 
     docker run --rm --net=host -v $AUTOCANCEL_HOME/autocancel_exp/elasticsearch_exp:/root -w /root easonliu12138/es_py_env:v1.1 /root/scripts/warmup.sh
@@ -41,7 +40,7 @@ function run_once {
     sudo mv $AUTOCANCEL_HOME/autocancel_exp/elasticsearch_exp/${4}_${START_TIME}_latency $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${CASE}_${START_TIME}/${4}_latency.csv
     sudo mv $AUTOCANCEL_HOME/autocancel_exp/elasticsearch_exp/${4}_${START_TIME}_throughput $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${CASE}_${START_TIME}/${4}_throughput.csv
 
-    DEFAULT_POLICY=$1 PREDICT_PROGRESS=$2 CANCEL_ENABLE=$3 AUTOCANCEL_LOG=$4 docker compose -f $AUTOCANCEL_HOME/scripts/cases/c4_complex_boolean/docker_config.yml down
+    USER_ID=$(id -u) GROUP_ID=$(id -g) DEFAULT_POLICY=$1 PREDICT_PROGRESS=$2 CANCEL_ENABLE=$3 AUTOCANCEL_LOG=$4 docker compose -f $AUTOCANCEL_HOME/scripts/cases/c4_complex_boolean/docker_config.yml down
 }
 
 run_once base_policy false true base_wo_predict $client_num
