@@ -12,12 +12,15 @@ client_num=2
 
 sudo sysctl -w vm.max_map_count=262144
 
-if [ ! -d "$AUTOCANCEL_HOME/scripts/logs/$START_DATE" ]; then
-    sudo mkdir $AUTOCANCEL_HOME/scripts/logs/$START_DATE
+if [ $(docker images | grep "solr_exp" | wc -l) -eq 0 ]; then
+    docker build --build-arg SOLR_ID=$(id -u) -t solr_exp:v1.0-9.0.0 .
 fi
 
-sudo mkdir $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${CASE}_${START_TIME}
-sudo chown -R 8983:8983 $AUTOCANCEL_HOME/scripts/logs
+if [ ! -d "$AUTOCANCEL_HOME/scripts/logs/$START_DATE" ]; then
+    mkdir $AUTOCANCEL_HOME/scripts/logs/$START_DATE
+fi
+
+mkdir $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${CASE}_${START_TIME}
 
 if [ ! -f "$AUTOCANCEL_HOME/autocancel_exp/solr_exp/query/boolean_search_1.json" ]; then
     docker run --rm --net=host -v $AUTOCANCEL_HOME/autocancel_exp/solr_exp:/root -w /root easonliu12138/es_py_env:v1.1 /root/performance_issues/complex_boolean_operations.py 80000 boolean_search_1.json
@@ -47,17 +50,17 @@ function run_once {
 run_once base_policy false true base_wo_predict $client_num
 sleep 10
 
-run_once base_policy true true base_w_predict $client_num
-sleep 10
-
-run_once multi_objective_policy false true moo_wo_predict $client_num
-sleep 10
-
-run_once multi_objective_policy true true moo_w_predict $client_num
-sleep 10
-
-run_once multi_objective_policy true false wo_cancel $client_num
-sleep 10
-
-run_once multi_objective_policy true false normal $client_num
-sleep 10
+# run_once base_policy true true base_w_predict $client_num
+# sleep 10
+# 
+# run_once multi_objective_policy false true moo_wo_predict $client_num
+# sleep 10
+# 
+# run_once multi_objective_policy true true moo_w_predict $client_num
+# sleep 10
+# 
+# run_once multi_objective_policy true false wo_cancel $client_num
+# sleep 10
+# 
+# run_once multi_objective_policy true false normal $client_num
+# sleep 10
