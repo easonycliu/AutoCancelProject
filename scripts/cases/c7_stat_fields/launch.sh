@@ -13,11 +13,10 @@ client_num=8
 sudo sysctl -w vm.max_map_count=262144
 
 if [ ! -d "$AUTOCANCEL_HOME/scripts/logs/$START_DATE" ]; then
-    sudo mkdir $AUTOCANCEL_HOME/scripts/logs/$START_DATE
+    mkdir $AUTOCANCEL_HOME/scripts/logs/$START_DATE
 fi
 
-sudo mkdir $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${CASE}_${START_TIME}
-sudo chown -R 8983:8983 $AUTOCANCEL_HOME/scripts/logs
+mkdir $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${CASE}_${START_TIME}
 
 if [ ! -f "$AUTOCANCEL_HOME/autocancel_exp/solr_exp/query/boolean_search_interfere.json" ]; then
     docker run --rm --net=host -v $AUTOCANCEL_HOME/autocancel_exp/solr_exp:/root -w /root easonliu12138/es_py_env:v1.1 /root/performance_issues/complex_boolean_operations.py 10000 boolean_search_interfere.json
