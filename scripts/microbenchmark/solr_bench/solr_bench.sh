@@ -25,10 +25,10 @@ mkdir $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${MICROBENCHMARK}_${START_TIME}
 
 function run_once {
     USER_ID=$(id -u) GROUP_ID=$(id -g) DEFAULT_POLICY=$1 PREDICT_PROGRESS=$2 CANCEL_ENABLE=$3 AUTOCANCEL_LOG=$4 AUTOCANCEL_START=$5 \
-		docker compose -f $AUTOCANCEL_HOME/scripts/microbenchmark/rally_benchmark/docker_config.yml down
+		docker compose -f $AUTOCANCEL_HOME/scripts/microbenchmark/solr_bench/docker_config.yml down
 
     USER_ID=$(id -u) GROUP_ID=$(id -g) DEFAULT_POLICY=$1 PREDICT_PROGRESS=$2 CANCEL_ENABLE=$3 AUTOCANCEL_LOG=$4 AUTOCANCEL_START=$5 \
-		docker compose -f $AUTOCANCEL_HOME/scripts/microbenchmark/rally_benchmark/docker_config.yml up &
+		docker compose -f $AUTOCANCEL_HOME/scripts/microbenchmark/solr_bench/docker_config.yml up &
     sleep 90
 
     for j in $(seq 1 1 $test_times); do
@@ -39,7 +39,7 @@ function run_once {
     done
 
     USER_ID=$(id -u) GROUP_ID=$(id -g) DEFAULT_POLICY=$1 PREDICT_PROGRESS=$2 CANCEL_ENABLE=$3 AUTOCANCEL_LOG=$4 AUTOCANCEL_START=$5 \
-		docker compose -f $AUTOCANCEL_HOME/scripts/microbenchmark/rally_benchmark/docker_config.yml down
+		docker compose -f $AUTOCANCEL_HOME/scripts/microbenchmark/solr_bench/docker_config.yml down
 }
 
 run_once multi_objective_policy true false normal true
