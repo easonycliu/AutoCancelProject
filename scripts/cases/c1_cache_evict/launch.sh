@@ -19,12 +19,13 @@ fi
 mkdir $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${CASE}_${START_TIME}
 
 function run_once {
-	USER_ID=$(id -u) GROUP_ID=$(id -g) DEFAULT_POLICY=$1 PREDICT_PROGRESS=$2 CANCEL_ENABLE=$3 AUTOCANCEL_LOG=$4 docker compose -f $AUTOCANCEL_HOME/scripts/cases/c1_cache_evict/docker_config.yml down
+	env_args="USER_ID=$(id -u) GROUP_ID=$(id -g) DEFAULT_POLICY=$1 PREDICT_PROGRESS=$2 CANCEL_ENABLE=$3 AUTOCANCEL_LOG=$4"
+	bash -c "$env_args docker compose -f $AUTOCANCEL_HOME/scripts/cases/c1_cache_evict/docker_config.yml down"
 
     docker stop single_node || true
     docker rm single_node || true
 
-    USER_ID=$(id -u) GROUP_ID=$(id -g) DEFAULT_POLICY=$1 PREDICT_PROGRESS=$2 CANCEL_ENABLE=$3 AUTOCANCEL_LOG=$4 docker compose -f $AUTOCANCEL_HOME/scripts/cases/c1_cache_evict/docker_config.yml up &
+	bash -c "$env_args docker compose -f $AUTOCANCEL_HOME/scripts/cases/c1_cache_evict/docker_config.yml up &"
     sleep 90
 
     docker run --rm --net=host -v $AUTOCANCEL_HOME/autocancel_exp/elasticsearch_exp:/root -w /root easonliu12138/es_py_env:v1.1 /root/scripts/warmup.sh
@@ -36,7 +37,7 @@ function run_once {
     mv $AUTOCANCEL_HOME/autocancel_exp/elasticsearch_exp/${4}_${START_TIME}_latency $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${CASE}_${START_TIME}/${4}_latency.csv
     mv $AUTOCANCEL_HOME/autocancel_exp/elasticsearch_exp/${4}_${START_TIME}_throughput $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${CASE}_${START_TIME}/${4}_throughput.csv
 
-    USER_ID=$(id -u) GROUP_ID=$(id -g) DEFAULT_POLICY=$1 PREDICT_PROGRESS=$2 CANCEL_ENABLE=$3 AUTOCANCEL_LOG=$4 docker compose -f $AUTOCANCEL_HOME/scripts/cases/c1_cache_evict/docker_config.yml down
+	bash -c "$env_args docker compose -f $AUTOCANCEL_HOME/scripts/cases/c1_cache_evict/docker_config.yml down"
 }
 
 run_once base_policy false true base_wo_predict $client_num
