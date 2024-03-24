@@ -4,6 +4,8 @@ set -e
 
 export AUTOCANCEL_HOME=$(git rev-parse --show-toplevel)
 
+gh auth login -p https --with-token <<< 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
+
 if [ ! -d "$AUTOCANCEL_HOME/scripts/data/elasticsearch" ]; then
     mkdir $AUTOCANCEL_HOME/scripts/data/elasticsearch
     pushd $AUTOCANCEL_HOME/scripts/data/elasticsearch
