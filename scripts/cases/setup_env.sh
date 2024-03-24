@@ -1,8 +1,9 @@
 #!/bin/bash
 
-if [ "$(dpkg -l | grep "java-common")" == "" ]; then
+if [ "$(dpkg -l | grep "jdk")" == "" ]; then
 	wget https://download.oracle.com/java/17/archive/jdk-17.0.10_linux-x64_bin.deb
 	sudo dpkg -i jdk-17.0.10_linux-x64_bin.deb
+	rm -f jdk-17.0.10_linux-x64_bin.deb
 fi
 
 if [ "$(dpkg -l | grep "docker")" == "" ]; then
