@@ -42,7 +42,7 @@ if [ ! -d "$AUTOCANCEL_HOME/scripts/data/solr_bench_home" ]; then
 
     cat xa* > solr_bench.tar.gz
     tar -xzf solr_bench.tar.gz
-    mv single_node/* .
+    mv suites/* .
     popd
 fi
 
