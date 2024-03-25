@@ -25,7 +25,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '6.00'
+          cpus: '8.00'
     user: "$USER_ID:$GROUP_ID"
     # blkio_config:
     #   device_read_bps:
