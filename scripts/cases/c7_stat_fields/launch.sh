@@ -44,17 +44,17 @@ function run_once {
 run_once base_policy false true base_wo_predict $client_num
 sleep 10
 
-# run_once base_policy true true base_w_predict $client_num
-# sleep 10
-# 
-# run_once multi_objective_policy false true moo_wo_predict $client_num
-# sleep 10
-# 
-# run_once multi_objective_policy true true moo_w_predict $client_num
-# sleep 10
-# 
-# run_once multi_objective_policy true false wo_cancel $client_num
-# sleep 10
-# 
-# run_once multi_objective_policy true false normal $client_num
-# sleep 10
+run_once base_policy true true base_w_predict $client_num
+sleep 10
+
+run_once multi_objective_policy false true moo_wo_predict $client_num
+sleep 10
+
+run_once multi_objective_policy true true moo_w_predict $client_num
+sleep 10
+
+run_once multi_objective_policy true false wo_cancel $client_num
+sleep 10
+
+run_once multi_objective_policy true false normal $client_num
+sleep 10
