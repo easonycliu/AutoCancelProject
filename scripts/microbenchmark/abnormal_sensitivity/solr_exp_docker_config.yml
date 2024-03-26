@@ -19,7 +19,7 @@ services:
       - $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${CASE}_${START_TIME}:/tmp/autocancel
     environment:
       - TZ=Asia/Shanghai
-      - "SOLR_JAVA_MEM=-Xms16g -Xmx16g"
+      - "SOLR_JAVA_MEM=-Xms${HEAP_SIZE}g -Xmx${HEAP_SIZE}g"
       - "SOLR_HOME=/var/solr/data"
       - "SOLR_OPTS=-Ddefault.policy=$DEFAULT_POLICY -Dpredict.progress=$PREDICT_PROGRESS -Dcancel.enable=$CANCEL_ENABLE -Dautocancel.log=$AUTOCANCEL_LOG -Dabnormal.portion=$ABNORMAL_PORTION -Dabnormal.absolute=$ABNORMAL_ABSOLUTE"
     ports:
@@ -27,7 +27,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '8.00'
+          cpus: "$CORE_NUM"
           # memory: '2G'
     # blkio_config:
     #   device_read_bps:
