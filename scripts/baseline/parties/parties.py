@@ -6,11 +6,10 @@ import sys
 import os
 import collections
 import threading
-#sys.path.append('/home/sc2682/scripts/monitor')
 #from monitorN import startMonitoring, endMonitoring
 import subprocess
 
-CONFIG = '/home/sc2682/scripts/manage/config.txt'  # default path to the input config.txt file
+CONFIG = './config.txt'  # default path to the input config.txt file
 if (len(sys.argv) > 1):
 	CONFIG = sys.argv[1]
 
@@ -72,7 +71,7 @@ def init():
 	global EWAY, MLat, TIMELIMIT, CONFIG, NUM, APP, QoS, Lat, Slack, ECORES, CORES, FREQ, WAY, CPU, MEM, INTERVAL
 	if len(sys.argv) > 2:
 		TIMELIMIT = int(sys.argv[2])
-# Read the name of colocated applications and their QoS target (may be in different units)
+	# Read the name of colocated applications and their QoS target (may be in different units)
 	print("initialize!")
 	if os.path.isfile('%s' % CONFIG) == False:
 		print("config file (%s) does not exist!" % CONFIG)
@@ -92,7 +91,7 @@ def init():
 			QoS[i] = QOS[APP[i]]
 			WAY[i] = 20 / NUM
 			MLat[i] = collections.deque(maxlen=(int(1.0 / INTERVAL)))
-# Initialize resource parititioning
+	# Initialize resource parititioning
 	j = 0
 	while len(ECORES) > 0:
 		CORES[j + 1].append(ECORES.pop())
@@ -100,11 +99,8 @@ def init():
 	for i in xrange(20 - 20 / NUM * NUM):
 		WAY[i + 1] += 1
 
-
-# Enforce harware isolation
+	# Enforce harware isolation
 	propogateCore()
-	# Monitoring of CPU and cache utilizataion is not needed in PARTIES manager. You can comment them out. These are just legacy codes and may be useful if you want to monitor real-time resource usage.
-	# monproc = subprocess.Popen("python /home/sc2682/scripts/monitor/monitorN.py %d" % TIMELIMIT, shell=True, stdout=FF, stderr=FF, preexec_fn=os.setsid);
 
 
 def main():
@@ -294,12 +290,9 @@ def wait():
 		if LDOWN[i] > 0:
 			LDOWN[i] -= 1
 	getLat()
-	getData()
-	record()
 	if TIMELIMIT != -1:
 		TIMELIMIT -= INTERVAL
 		if TIMELIMIT < 0:
-			printout()
 			exit(0)
 
 
@@ -327,51 +320,6 @@ def getLat():
 		#LSlack[i] = Slack[i]
 		Slack[i] = (QoS[i] - Lat[i]) * 1.0 / QoS[i]
 		print('  --', APP[i], ':', Lat[i], '(', Slack[i], LSlack[i], ')')
-
-
-def getData():
-	global NUM, cCPU, CPU, CORES, MEM
-	tmp = 0
-	# Monitoring of CPU and cache utilizataion is not needed in PARTIES manager. You can comment them out. These are just legacy codes and may be useful if you want to monitor real-time resource usage.
-	# with open("/home/sc2682/scripts/monitor/cpu.txt", "r") as ff:
-	#    lines = ff.readlines();
-	#    while (len(lines) >=1 and "Average" in lines[-1]):
-	#        lines = lines[:-1]
-	#    if (len(lines) >= 22):
-	#        lines = lines[-22:]
-	#        cnt = [0 for i in xrange(0, NUM+10, 1)]
-	#        for line in lines:
-	#            if "Average" in line:
-	#                break
-	#            words = line.split()
-	#            if len(words)<10:
-	#                break
-	#            cpuid = int(words[2])
-	#            tmp += float(words[3])+float(words[5])+float(words[6])+float(words[8])
-	#            for j in xrange(1, NUM+1, 1):
-	#                if cpuid in CORES[j]:
-	#                    CPU[j] += float(words[3])+float(words[5])+float(words[6])+float(words[8])
-	#                    cnt[j] += 1
-	#                break
-	#        for j in xrange(1, NUM+1):
-	#            if cnt[j] > 0:
-	#                CPU[j] /= cnt[j]
-	#cCPU.append(tmp/14.0)
-
-	#with open("/home/sc2682/scripts/monitor/cat.txt", "r") as ff:
-	#    lines = ff.readlines();
-	#    if (len(lines) >= 22):
-	#        lines = lines[-22:]
-	#        for line in lines:
-	#            words = line.split()
-	#            if words[0] == "TIME" or words[0] == "CORE" or words[0] == "WARN":
-	#                continue
-	#            if ("WARN:" in words[0]) or ("Ter" in words[0]):
-	#                break
-	#            cpuid = int(words[0])
-	#            for j in xrange(1, NUM+1):
-	#                if cpuid in CORES[j]:
-	#                    MEM[j] += float(words[4])+float(words[5])
 
 
 def coreStr(cores):
@@ -600,63 +548,6 @@ def propogateFreq(idx=None):
 				stdout=FF,
 				stderr=FF
 			)
-
-
-def record():
-	global CPU, LOAD, NUM, Lat, rrLat, saveEnergy, rLat, CORES, rCORES, WAY, rWAY, FREQ, rFREQ
-	for i in xrange(1, NUM + 1):
-		rrLat[i].append(Lat[i])
-		rLat[i].append(1 - LSlack[i])
-		rCORES[i].append(len(CORES[i]))
-		rWAY[i].append(WAY[i])
-		rFREQ[i].append(FREQ[i])
-	p = subprocess.Popen(
-		"curl http://128.253.128.66:84/memcached/count.txt | tail -1",
-		shell=True,
-		stdout=subprocess.PIPE,
-		stderr=FF,
-		preexec_fn=os.setsid,
-		bufsize=0
-	)
-	#LOAD.append(10)
-	out, err = p.communicate()
-	if out != '':
-		LOAD.append(int(out) - 1)
-		#if int(out) > 24:
-		#    saveEnergy = False
-		#else:
-		#    saveEnergy = True
-	elif len(LOAD) > 0:
-		LOAD.append(LOAD[-1])
-	else:
-		LOAD.append(0)
-
-
-def printout():
-	global NUM, rrLat, LOAD, rLat, rCORES, cCPU, rFREQ, rWAY
-	print("CPU Utilization: ", sum(cCPU) * 1.0 / len(cCPU))
-	if PLOT == True:
-		of = open("/home/sc2682/scripts/manage/results.txt", "w")
-		for i in xrange(1, NUM + 1):
-			for item in rrLat[i]:
-				of.write("%d " % item)
-			of.write("\n")
-			for item in rLat[i]:
-				of.write("%f " % item)
-			of.write("\n")
-			for item in rCORES[i]:
-				of.write("%d " % item)
-			of.write("\n")
-			for item in rFREQ[i]:
-				of.write("%d " % item)
-			of.write("\n")
-			for item in rWAY[i]:
-				of.write("%d " % item)
-			of.write("\n")
-		for item in LOAD:
-			of.write("%d " % item)
-		of.write("\n")
-		of.close()
 
 
 if __name__ == "__main__":
