@@ -21,12 +21,15 @@ client_num=5
 
 sudo sysctl -w vm.max_map_count=262144
 
-if [ ! -d "$AUTOCANCEL_HOME/scripts/logs/$START_DATE" ]; then
-    sudo mkdir $AUTOCANCEL_HOME/scripts/logs/$START_DATE
+if [ $(docker images | grep "solr_exp" | wc -l) -eq 0 ]; then
+    docker build --build-arg SOLR_ID=$(id -u) -t solr_exp:v1.0-9.0.0 .
 fi
 
-sudo mkdir $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${MICROBENCHMARK}_${START_TIME}
-sudo chown -R 1000:1000 $AUTOCANCEL_HOME/scripts/logs
+if [ ! -d "$AUTOCANCEL_HOME/scripts/logs/$START_DATE" ]; then
+    mkdir $AUTOCANCEL_HOME/scripts/logs/$START_DATE
+fi
+
+mkdir $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${MICROBENCHMARK}_${START_TIME}
 
 if [ ! -f "$AUTOCANCEL_HOME/autocancel_exp/elasticsearch_exp/query/boolean_search.json" ]; then
     docker run --rm --net=host -v $AUTOCANCEL_HOME/autocancel_exp/elasticsearch_exp:/root -w /root easonliu12138/es_py_env:v1.1 /root/performance_issues/complex_boolean_operations.py 2000 boolean_search.json
@@ -38,7 +41,7 @@ function run_once {
     local core_num=$(echo ${case_to_script_map["$6"]} | awk '{print $3}')
     local heap_size=$(echo ${case_to_script_map["$6"]} | awk '{print $4}')
 
-	local env_args="DEFAULT_POLICY=$1 PREDICT_PROGRESS=$2 CANCEL_ENABLE=$3 AUTOCANCEL_LOG=$4 ABNORMAL_PORTION=$7 ABNORMAL_ABSOLUTE=$8 CORE_NUM=$core_num HEAP_SIZE=$heap_size"
+	local env_args="USER_ID=$(id -u) GROUP_ID=$(id -g) DEFAULT_POLICY=$1 PREDICT_PROGRESS=$2 CANCEL_ENABLE=$3 AUTOCANCEL_LOG=$4 ABNORMAL_PORTION=$7 ABNORMAL_ABSOLUTE=$8 CORE_NUM=$core_num HEAP_SIZE=$heap_size"
 
 	bash -c "$env_args docker compose -f $AUTOCANCEL_HOME/scripts/microbenchmark/abnormal_sensitivity/${app_exp}_docker_config.yml down"
 

@@ -26,6 +26,7 @@ services:
       resources:
         limits:
           cpus: "$CORE_NUM"
+    user: "$USER_ID:$GROUP_ID"
     # blkio_config:
     #   device_read_bps:
     #     - path: /dev/sda

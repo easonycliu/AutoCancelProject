@@ -1,7 +1,7 @@
 version: '3'
 services:
   single_node:
-    image: solr:9.0.0
+    image: solr_exp:v1.0-9.0.0
     # stdin_open: true
     # tty: true
     # entrypoint: ["bash"]
