@@ -22,4 +22,7 @@ note
 
 .bash_history
 
+# External repos for exp use
 /solr-bench
+/PARTIES
+/psp
