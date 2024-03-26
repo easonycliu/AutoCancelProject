@@ -95,17 +95,7 @@ function run_round {
     sleep 10
 }
 
-run_round c1
-sleep 10
-# run_round c2
-# sleep 10
-# run_round c3
-# sleep 10
-# run_round c4
-# sleep 10
-# run_round c5
-# sleep 10
-# run_round c6
-# sleep 10
-# run_round c7
-# sleep 10
+if [[ "$1" =~ ^c[1-7]$ ]]; then
+	run_round $1
+fi
+
