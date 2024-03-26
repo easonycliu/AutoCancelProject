@@ -43,9 +43,9 @@ function run_once {
 
 	local env_args="USER_ID=$(id -u) GROUP_ID=$(id -g) DEFAULT_POLICY=$1 PREDICT_PROGRESS=$2 CANCEL_ENABLE=$3 AUTOCANCEL_LOG=$4 UPDATE_INTERVAL=$7 CORE_NUM=$core_num HEAP_SIZE=$heap_size"
 
-	bash -c "$env_args docker compose -f $AUTOCANCEL_HOME/scripts/microbenchmark/abnormal_sensitivity/${app_exp}_docker_config.yml down"
+	bash -c "$env_args docker compose -f $AUTOCANCEL_HOME/scripts/microbenchmark/interval_sensitivity/${app_exp}_docker_config.yml down"
 
-	bash -c "$env_args docker compose -f $AUTOCANCEL_HOME/scripts/microbenchmark/abnormal_sensitivity/${app_exp}_docker_config.yml up &"
+	bash -c "$env_args docker compose -f $AUTOCANCEL_HOME/scripts/microbenchmark/interval_sensitivity/${app_exp}_docker_config.yml up &"
     sleep 60
 
     docker run --rm --net=host -v $AUTOCANCEL_HOME/autocancel_exp/$app_exp:/root -w /root easonliu12138/es_py_env:v1.1 /root/scripts/warmup.sh
@@ -57,11 +57,11 @@ function run_once {
     sudo mv $AUTOCANCEL_HOME/autocancel_exp/$app_exp/${4}_${START_TIME}_latency $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${MICROBENCHMARK}_${START_TIME}/${4}_latency.csv
     sudo mv $AUTOCANCEL_HOME/autocancel_exp/$app_exp/${4}_${START_TIME}_throughput $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${MICROBENCHMARK}_${START_TIME}/${4}_throughput.csv
 
-    sudo mv $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${MICROBENCHMARK}_${START_TIME}/${4}.csv $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${MICROBENCHMARK}_${START_TIME}/${6}_${4}_${7}_${8}.csv
-    sudo mv $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${MICROBENCHMARK}_${START_TIME}/${4}_latency.csv $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${MICROBENCHMARK}_${START_TIME}/${6}_${4}_${7}_${8}_latency.csv
-    sudo mv $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${MICROBENCHMARK}_${START_TIME}/${4}_throughput.csv $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${MICROBENCHMARK}_${START_TIME}/${6}_${4}_${7}_${8}_throughput.csv
+    sudo mv $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${MICROBENCHMARK}_${START_TIME}/${4}.csv $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${MICROBENCHMARK}_${START_TIME}/${6}_${4}_${7}.csv
+    sudo mv $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${MICROBENCHMARK}_${START_TIME}/${4}_latency.csv $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${MICROBENCHMARK}_${START_TIME}/${6}_${4}_${7}_latency.csv
+    sudo mv $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${MICROBENCHMARK}_${START_TIME}/${4}_throughput.csv $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${MICROBENCHMARK}_${START_TIME}/${6}_${4}_${7}_throughput.csv
 
-	bash -c "$env_args docker compose -f $AUTOCANCEL_HOME/scripts/microbenchmark/abnormal_sensitivity/${app_exp}_docker_config.yml down"
+	bash -c "$env_args docker compose -f $AUTOCANCEL_HOME/scripts/microbenchmark/interval_sensitivity/${app_exp}_docker_config.yml down"
 }
 
 function run_case {
