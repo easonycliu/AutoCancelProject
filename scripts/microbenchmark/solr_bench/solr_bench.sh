@@ -33,7 +33,7 @@ function run_once {
 
     for j in $(seq 1 1 $test_times); do
         BENCHMARK_START_TIME=$(date +%Y_%m_%d_%H_%M_%S)
-		docker run --rm --net=host -v $AUTOCANCEL_HOME/scripts/data/solr_bench_home:/solr-bench/suites solr_bench_exp:v1.0
+		docker run --rm --net=host -v $AUTOCANCEL_HOME/scripts/data/solr_bench_home:/solr-bench/suites easonliu12138/solr_bench_exp:v1.0
 
         sleep 10
     done
