@@ -50,11 +50,6 @@ for cgroup_name in ${cgroup_names[@]}; do
 	sudo cgcreate -g cpuset:$cgroup_name
 	sudo cgset -r cpuset.mems=0 /$cgroup_name
 	sudo cgset -r cpuset.cpus=0-$(( `nproc` - 1 )) /$cgroup_name
-
-	sudo cgdelete -g cpu:$cgroup_name
-	sudo dgcreate -g cpu:$cgroup_name
-	sudo cgset -r cpu.cfs_period_us=10000 /$cgroup_name
-	sudo cgset -r cpu.cfs_quota_us=-1 /$cgroup_name
 done
 
 target_pid=$(ps -aux | grep "autocancel.log" | head -1 | awk '{print $2}')

@@ -458,7 +458,26 @@ def propogateCore(idx=None):
 
 
 def propogateCache(idx=None):
-	pass
+	global CORES, WAY, NUM, APP
+	ways = 0
+	for i in xrange(1, NUM + 1):
+		if idx == None or i >= idx:
+			subprocess.call(
+				["pqos", "-e",
+					"llc:%d=%s;" % (i + 1, way(WAY[i], ways))],
+				stdout=FF,
+				stderr=FF
+			)
+			subprocess.call(
+				["pqos", "-a",
+					"llc:%d=%s;" % (i + 1, coreStrHyper(CORES[i]))],
+				stdout=FF,
+				stderr=FF
+			)
+		if idx == None or i == idx:
+			print('    Change Cache Ways of', APP[i], ':', WAY[i])
+		ways += WAY[i]
+
 
 def propogateFreq(idx=None):
 	global CORES, FREQ, NUM, APP
