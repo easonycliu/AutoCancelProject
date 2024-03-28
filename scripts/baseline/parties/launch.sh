@@ -46,10 +46,15 @@ sleep 10
 
 # Set up cgroup for PARTIES
 for cgroup_name in ${cgroup_names[@]}; do
-	sudo cgdelete -g cpuset:/$cgroup_name
-	sudo cgcreate -g cpuset:/$cgroup_name
-	echo "0" | sudo tee /sys/fs/cgroup/cpuset/$cgroup_name/cpuset.mems
-	echo "0-$(( `nproc` - 1 ))" | sudo tee /sys/fs/cgroup/cpuset/$cgroup_name/cpuset.cpus
+	sudo cgdelete -g cpuset:$cgroup_name
+	sudo cgcreate -g cpuset:$cgroup_name
+	sudo cgset -r cpuset.mems=0 /$cgroup_name
+	sudo cgset -r cpuset.cpus=0-$(( `nproc` - 1 )) /$cgroup_name
+
+	sudo cgdelete -g cpu:$cgroup_name
+	sudo dgcreate -g cpu:$cgroup_name
+	sudo cgset -r cpu.cfs_period_us=10000 /$cgroup_name
+	sudo cgset -r cpu.cfs_quota_us=-1 /$cgroup_name
 done
 
 target_pid=$(ps -aux | grep "autocancel.log" | head -1 | awk '{print $2}')
