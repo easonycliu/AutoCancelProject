@@ -9,9 +9,13 @@ import threading
 #from monitorN import startMonitoring, endMonitoring
 import subprocess
 
-CONFIG = './config.txt'  # default path to the input config.txt file
+CONFIG = os.path.join(os.getcwd(), "config.txt")  # default path to the input config.txt file
 if (len(sys.argv) > 1):
 	CONFIG = sys.argv[1]
+
+core_num = 8
+if (len(sys.argv) > 2):
+	core_num = int(sys.argv[2])
 
 # QoS target of each application, in nanoseconds.
 QOS = {
@@ -30,8 +34,8 @@ NUM = 0  # Number of colocated applications
 APP = [None for i in xrange(10)]  # Application names
 IP = [None for i in xrange(10)]  # IP of clients that run applications
 QoS = [None for i in xrange(10)]  # Target QoS of each application
-ECORES = [i for i in range(8, 22, 1)]  # unallocated cores
-CORES = [None for i in xrange(10)]  # CPU allocation
+ECORES = [i for i in range(0, core_num, 1)] # unallocated cores
+CORES = [None for i in range(int(core_num / 2))] # CPU allocation
 LOAD = []
 FREQ = [2200 for i in xrange(10)]  # Frequency allocation
 EWAY = 0  # unallocated ways
@@ -69,8 +73,8 @@ TOLERANCE = 5  # Check these times of latency whenver an action is taken
 
 def init():
 	global EWAY, MLat, TIMELIMIT, CONFIG, NUM, APP, QoS, Lat, Slack, ECORES, CORES, FREQ, WAY, CPU, MEM, INTERVAL
-	if len(sys.argv) > 2:
-		TIMELIMIT = int(sys.argv[2])
+	if len(sys.argv) > 3:
+		TIMELIMIT = int(sys.argv[3])
 	# Read the name of colocated applications and their QoS target (may be in different units)
 	print("initialize!")
 	if os.path.isfile('%s' % CONFIG) == False:
@@ -435,27 +439,19 @@ def propogateCore(idx=None):
 	if idx == None:
 		for i in xrange(1, NUM + 1):
 			print('    Change Core of', APP[i], ':', CORES[i])
-			subprocess.call(
-				[
-					"lxc-cgroup", "-n",
-					"shuang_%s" % APP[i], "cpuset.cpus",
-					coreStr(CORES[i])
-				],
-				stdout=FF,
-				stderr=FF
+			cmd = "echo {} | sudo tee /sys/fs/cgroup/cpuset/{}/cpuset.cpus".format(
+				coreStr(CORES[idx]),
+				APP[idx]
 			)
+			os.system(cmd)
 		propogateCache()
 		propogateFreq()
 	else:
-		subprocess.call(
-			[
-				"lxc-cgroup", "-n",
-				"shuang_%s" % APP[idx], "cpuset.cpus",
-				coreStr(CORES[idx])
-			],
-			stdout=FF,
-			stderr=FF
+		cmd = "echo {} | sudo tee /sys/fs/cgroup/cpuset/{}/cpuset.cpus".format(
+			coreStr(CORES[idx]),
+			APP[idx]
 		)
+		os.system(cmd)
 		print('    Change Core of', APP[idx], ':', CORES[idx])
 		propogateCache(idx)
 		propogateFreq(idx)

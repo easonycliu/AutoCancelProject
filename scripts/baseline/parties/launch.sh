@@ -49,7 +49,7 @@ for cgroup_name in ${cgroup_names[@]}; do
 	sudo cgdelete -g cpuset:/$cgroup_name
 	sudo cgcreate -g cpuset:/$cgroup_name
 	echo "0" | sudo tee /sys/fs/cgroup/cpuset/$cgroup_name/cpuset.mems
-	echo "0-$(( `proc` - 1 ))" | sudo tee /sys/fs/cgroup/cpuset/$cgroup_name/cpuset.cpus
+	echo "0-$(( `nproc` - 1 ))" | sudo tee /sys/fs/cgroup/cpuset/$cgroup_name/cpuset.cpus
 done
 
 target_pid=$(ps -aux | grep "autocancel.log" | head -1 | awk '{print $2}')
@@ -61,7 +61,7 @@ done
 # Finish set up cgroup for PARTIES
 
 # Launch PARTIES
-./parties.py $AUTOCANCEL_HOME/scripts/baseline/parties/config.txt 10000
+./parties.py $AUTOCANCEL_HOME/scripts/baseline/parties/config.txt `nproc` 10000
 # Finish launch PARTIES
 
 docker run --rm --net=host -v $AUTOCANCEL_HOME/autocancel_exp/solr_exp:/root -w /root easonliu12138/es_py_env:v1.1 /root/scripts/complex_boolean_script.sh $client_num ${BASELINE}_${START_TIME} $BASELINE
