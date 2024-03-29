@@ -61,7 +61,7 @@ function run_once {
 
 	# Set up cgroup for PARTIES
 	for cgroup_name in ${cgroup_names[@]}; do
-		sudo cgdelete -g cpuset:$cgroup_name
+		sudo cgdelete -g cpuset:$cgroup_name || true
 		sudo cgcreate -g cpuset:$cgroup_name
 		sudo cgset -r cpuset.mems=0 /$cgroup_name
 		sudo cgset -r cpuset.cpus=0-$(( `nproc` - 1 )) /$cgroup_name
