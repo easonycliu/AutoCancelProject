@@ -14,7 +14,7 @@ case_to_script_map["c1"]="elasticsearch_exp multiclient_request_cache_evict 8.00
 case_to_script_map["c3"]="elasticsearch_exp multiclient_nested_aggs 8.00 8"
 case_to_script_map["c4"]="elasticsearch_exp multiclient_complex_boolean 8.00 16"
 case_to_script_map["c5"]="elasticsearch_exp multiclient_bulk_large_document 8.00 16"
-# case_to_script_map["c6"]="solr_exp complex_boolean_script 2.00 16"
+case_to_script_map["c6"]="solr_exp complex_boolean_script 2.00 16"
 case_to_script_map["c7"]="solr_exp stat_fields 4.00 16"
 
 client_num=5
