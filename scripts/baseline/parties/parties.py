@@ -80,14 +80,14 @@ def init():
 			CORES[i] = []
 			APP[i] = words[0]
 			QoS[i] = int(words[1])
-			WAY[i] = 20 / NUM
+			WAY[i] = int(20 / NUM)
 			MLat[i] = collections.deque(maxlen=(int(1.0 / INTERVAL)))
 	# Initialize resource parititioning
 	j = 0
 	while len(ECORES) > 0:
 		CORES[j + 1].append(ECORES.pop())
 		j = (j + 1) % NUM
-	for i in range(20 - 20 / NUM * NUM):
+	for i in range(int(20 - 20 / NUM * NUM)):
 		WAY[i + 1] += 1
 
 	# Enforce harware isolation
@@ -425,8 +425,8 @@ def propogateCore(idx=None):
 		for i in range(1, NUM + 1):
 			print('    Change Core of', APP[i], ':', CORES[i])
 			cmd = "echo {} | sudo tee /sys/fs/cgroup/cpuset/{}/cpuset.cpus".format(
-				coreStr(CORES[idx]),
-				APP[idx]
+				coreStr(CORES[i]),
+				APP[i]
 			)
 			os.system(cmd)
 		propogateCache()
