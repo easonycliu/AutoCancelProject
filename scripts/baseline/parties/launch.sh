@@ -47,7 +47,7 @@ function run_once {
     local core_num=$(echo ${case_to_script_map["$1"]} | awk '{print $3}')
     local heap_size=$(echo ${case_to_script_map["$1"]} | awk '{print $4}')
 
-	env_args="AUTOCANCEL_LOG=$BASELINE AUTOCANCEL_START=false CORE_NUM=$core_num HEAP_SIZE=$heap_size"
+	env_args="USER_ID=$(id -u) GROUP_ID=$(id -g) AUTOCANCEL_LOG=$BASELINE AUTOCANCEL_START=false CORE_NUM=$core_num HEAP_SIZE=$heap_size"
 	bash -c "$env_args docker compose -f $AUTOCANCEL_HOME/scripts/baseline/parties/${app_exp}_docker_config.yml down"
 	
 	docker stop single_node || true
@@ -90,4 +90,4 @@ function run_once {
 	bash -c "$env_args docker compose -f $AUTOCANCEL_HOME/scripts/baseline/parties/${app_exp}_docker_config.yml down"
 }
 
-run_once c1 $client_num
+run_once c6 $client_num
