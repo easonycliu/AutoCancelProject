@@ -292,8 +292,11 @@ def getLat():
 
 	for i in range(1, NUM + 1):
 		app = APP[i]
+		lat_path = os.path.join(os.environ["AUTOCANCEL_HOME"], "autocancel_exp", "solr_exp", app)
+		if not os.path.exists(lat_path):
+			continue
 		p = subprocess.Popen(
-			"cat {} | tail -1".format(os.path.join(os.environ["AUTOCANCEL_HOME"], "autocancel_exp", "solr_exp")),
+			"cat {} | tail -1".format(lat_path),
 			shell=True,
 			stdout=subprocess.PIPE,
 			stderr=FF,

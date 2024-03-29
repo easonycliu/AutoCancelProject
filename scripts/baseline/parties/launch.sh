@@ -24,22 +24,11 @@ case_to_script_map["c7"]="solr_exp stat_fields 4.00 16"
 
 sudo sysctl -w vm.max_map_count=262144
 
-if [ $(docker images | grep "solr_exp" | wc -l) -eq 0 ]; then
-    docker build --build-arg SOLR_ID=$(id -u) -t solr_exp:v1.0-9.0.0 .
-fi
-
 if [ ! -d "$AUTOCANCEL_HOME/scripts/logs/$START_DATE" ]; then
     mkdir $AUTOCANCEL_HOME/scripts/logs/$START_DATE
 fi
 
 mkdir $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${BASELINE}_${START_TIME}
-
-if [ ! -f "$AUTOCANCEL_HOME/autocancel_exp/solr_exp/query/boolean_search_1.json" ]; then
-    docker run --rm --net=host -v $AUTOCANCEL_HOME/autocancel_exp/solr_exp:/root -w /root easonliu12138/es_py_env:v1.1 /root/performance_issues/complex_boolean_operations.py 80000 boolean_search_1.json
-fi
-if [ ! -f "$AUTOCANCEL_HOME/autocancel_exp/solr_exp/query/boolean_search_2.json" ]; then
-    docker run --rm --net=host -v $AUTOCANCEL_HOME/autocancel_exp/solr_exp:/root -w /root easonliu12138/es_py_env:v1.1 /root/performance_issues/complex_boolean_operations.py 50000 boolean_search_2.json
-fi
 
 function run_once {
     local app_exp=$(echo ${case_to_script_map["$1"]} | awk '{print $1}')
@@ -79,13 +68,13 @@ function run_once {
 	./parties.py $AUTOCANCEL_HOME/scripts/baseline/parties/config.txt `nproc` 10000
 	# Finish launch PARTIES
 	
-	docker run --rm --net=host -v $AUTOCANCEL_HOME/autocancel_exp/solr_exp:/root -w /root easonliu12138/es_py_env:v1.1 /root/scripts/$case_name.sh $2 ${BASELINE}_${START_TIME} $BASELINE $BASELINE:$(echo ${cgroup_names[@]} | tr " " ":")
+	docker run --rm --net=host -v $AUTOCANCEL_HOME/autocancel_exp/$app_exp:/root -w /root easonliu12138/es_py_env:v1.1 /root/scripts/$case_name.sh $2 ${BASELINE}_${START_TIME} $BASELINE $BASELINE:$(echo ${cgroup_names[@]} | tr " " ":")
 	sleep 10
 	
 	kill -2 $(ps | grep parties.py | awk '{print $1}')
 	
-	mv $AUTOCANCEL_HOME/autocancel_exp/solr_exp/${BASELINE}_${START_TIME}_latency $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${BASELINE}_${START_TIME}/${BASELINE}_latency.csv
-	mv $AUTOCANCEL_HOME/autocancel_exp/solr_exp/${BASELINE}_${START_TIME}_throughput $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${BASELINE}_${START_TIME}/${BASELINE}_throughput.csv
+	mv $AUTOCANCEL_HOME/autocancel_exp/$app_exp/${BASELINE}_${START_TIME}_latency $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${BASELINE}_${START_TIME}/${BASELINE}_latency.csv
+	mv $AUTOCANCEL_HOME/autocancel_exp/$app_exp/${BASELINE}_${START_TIME}_throughput $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${BASELINE}_${START_TIME}/${BASELINE}_throughput.csv
 	
 	bash -c "$env_args docker compose -f $AUTOCANCEL_HOME/scripts/baseline/parties/${app_exp}_docker_config.yml down"
 }
