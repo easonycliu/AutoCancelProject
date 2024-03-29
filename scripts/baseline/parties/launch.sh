@@ -14,13 +14,13 @@ cgroup_num=$(cat config.txt | head -1)
 cgroup_names=($(cat config.txt | tail -n $cgroup_num | awk '{print $1}'))
 
 declare -A case_to_script_map
-case_to_script_map["c1"]="elasticsearch_exp multiclient_request_cache_evict 8.00 16"
-# case_to_script_map["c2"]="elasticsearch_exp multiclient_update_by_query 8.00 16"
-case_to_script_map["c3"]="elasticsearch_exp multiclient_nested_aggs 8.00 8"
-case_to_script_map["c4"]="elasticsearch_exp multiclient_complex_boolean 8.00 16"
-case_to_script_map["c5"]="elasticsearch_exp multiclient_bulk_large_document 8.00 16"
-case_to_script_map["c6"]="solr_exp complex_boolean_script 2.00 16"
-case_to_script_map["c7"]="solr_exp stat_fields 4.00 16"
+case_to_script_map["c1"]="elasticsearch_exp multiclient_request_cache_evict 8.00 16 5"
+# case_to_script_map["c2"]="elasticsearch_exp multiclient_update_by_query 8.00 16 8"
+case_to_script_map["c3"]="elasticsearch_exp multiclient_nested_aggs 8.00 8 8"
+case_to_script_map["c4"]="elasticsearch_exp multiclient_complex_boolean 8.00 16 5"
+case_to_script_map["c5"]="elasticsearch_exp multiclient_bulk_large_document 8.00 16 5"
+case_to_script_map["c6"]="solr_exp complex_boolean_script 2.00 16 2"
+case_to_script_map["c7"]="solr_exp stat_fields 4.00 16 8"
 
 sudo sysctl -w vm.max_map_count=262144
 
@@ -35,6 +35,7 @@ function run_once {
     local case_name=$(echo ${case_to_script_map["$1"]} | awk '{print $2}')
     local core_num=$(echo ${case_to_script_map["$1"]} | awk '{print $3}')
     local heap_size=$(echo ${case_to_script_map["$1"]} | awk '{print $4}')
+    local client_num=$(echo ${case_to_script_map["$1"]} | awk '{print $5}')
 
 	env_args="USER_ID=$(id -u) GROUP_ID=$(id -g) AUTOCANCEL_LOG=$BASELINE AUTOCANCEL_START=false CORE_NUM=$core_num HEAP_SIZE=$heap_size"
 	bash -c "$env_args docker compose -f $AUTOCANCEL_HOME/scripts/baseline/parties/${app_exp}_docker_config.yml down"
@@ -68,7 +69,8 @@ function run_once {
 	./parties.py $AUTOCANCEL_HOME/scripts/baseline/parties/config.txt `nproc` 10000 > /dev/null &
 	# Finish launch PARTIES
 	
-	docker run --rm --net=host -v $AUTOCANCEL_HOME/autocancel_exp/$app_exp:/root -w /root easonliu12138/es_py_env:v1.1 /root/scripts/$case_name.sh $2 ${BASELINE}_${START_TIME} $BASELINE $BASELINE:$(echo ${cgroup_names[@]} | tr " " ":")
+	docker run --rm --net=host -v $AUTOCANCEL_HOME/autocancel_exp/$app_exp:/root -w /root easonliu12138/es_py_env:v1.1 /root/scripts/$case_name.sh \
+		$client_num ${BASELINE}_${START_TIME} $BASELINE $BASELINE:$(echo ${cgroup_names[@]} | tr " " ":")
 	sleep 10
 	
 	kill -2 $(ps | grep parties.py | awk '{print $1}')
@@ -79,4 +81,4 @@ function run_once {
 	bash -c "$env_args docker compose -f $AUTOCANCEL_HOME/scripts/baseline/parties/${app_exp}_docker_config.yml down"
 }
 
-run_once c6 $client_num
+run_once c6
