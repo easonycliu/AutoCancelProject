@@ -31,38 +31,38 @@ INTERVAL = 0.1  # Frequency of monitoring, unit is second
 TIMELIMIT = 200  # How long to run this controller, unit is in second.
 REST = 100
 NUM = 0  # Number of colocated applications
-APP = [None for i in xrange(10)]  # Application names
-IP = [None for i in xrange(10)]  # IP of clients that run applications
-QoS = [None for i in xrange(10)]  # Target QoS of each application
+APP = [None for i in range(10)]  # Application names
+IP = [None for i in range(10)]  # IP of clients that run applications
+QoS = [None for i in range(10)]  # Target QoS of each application
 ECORES = [i for i in range(0, core_num, 1)] # unallocated cores
 CORES = [None for i in range(int(core_num / 2))] # CPU allocation
 LOAD = []
-FREQ = [2200 for i in xrange(10)]  # Frequency allocation
+FREQ = [2200 for i in range(10)]  # Frequency allocation
 EWAY = 0  # unallocated ways
-WAY = [0 for i in xrange(10)]  # Allocation of LLC ways
-Lat = [0 for i in xrange(10)]  # Real-time tail latency
-MLat = [0 for i in xrange(10)]  # Real-time tail latency of a moving window
-Slack = [0 for i in xrange(10)]  # Real-time tail latency slack
+WAY = [0 for i in range(10)]  # Allocation of LLC ways
+Lat = [0 for i in range(10)]  # Real-time tail latency
+MLat = [0 for i in range(10)]  # Real-time tail latency of a moving window
+Slack = [0 for i in range(10)]  # Real-time tail latency slack
 LSlack = [
-	0 for i in xrange(10)
+	0 for i in range(10)
 ]  # Real-time tail latency slack in the last interval
 LLSlack = [
-	0 for i in xrange(10)
+	0 for i in range(10)
 ]  # Real-time tail latency slack in the last interval
 LDOWN = [
-	0 for i in xrange(10)
+	0 for i in range(10)
 ]  # Time to wait before this app can be downsized again
-CPU = [0 for i in xrange(10)]  # CPU Utilization per core of each application
+CPU = [0 for i in range(10)]  # CPU Utilization per core of each application
 cCPU = collections.deque(maxlen=(int(5.0 / INTERVAL)))
 MEM = [
-	0 for i in xrange(10)
+	0 for i in range(10)
 ]  # Total memory bandwidth usage of each application
-State = [0 for i in xrange(10)]  # FSM State during resource adjustment
-rLat = [[] for i in xrange(10)]  # Save real-time latency for final plotting
-rrLat = [[] for i in xrange(10)]  # Save real-time latency for final plotting
-rCORES = [[] for i in xrange(10)]  # Save real-time #cores for final plotting
-rWAY = [[] for i in xrange(10)]  # Save real-time #ways for final plotting
-rFREQ = [[] for i in xrange(10)]  # Save real-time frequency for final plotting
+State = [0 for i in range(10)]  # FSM State during resource adjustment
+rLat = [[] for i in range(10)]  # Save real-time latency for final plotting
+rrLat = [[] for i in range(10)]  # Save real-time latency for final plotting
+rCORES = [[] for i in range(10)]  # Save real-time #cores for final plotting
+rWAY = [[] for i in range(10)]  # Save real-time #ways for final plotting
+rFREQ = [[] for i in range(10)]  # Save real-time frequency for final plotting
 FF = open("gabage.txt", "w")  # random outputs
 PLOT = True  # If needed to do the final plotting
 saveEnergy = True  # If needed to save energy when QoSes can all be satisfied
@@ -100,7 +100,7 @@ def init():
 	while len(ECORES) > 0:
 		CORES[j + 1].append(ECORES.pop())
 		j = (j + 1) % NUM
-	for i in xrange(20 - 20 / NUM * NUM):
+	for i in range(20 - 20 / NUM * NUM):
 		WAY[i + 1] += 1
 
 	# Enforce harware isolation
@@ -124,7 +124,7 @@ def makeDecision():
 	if helpID > 0:
 		cur = Lat[helpID]
 		cnt = 0
-		for i in xrange(TOLERANCE):
+		for i in range(TOLERANCE):
 			wait()
 			if Lat[helpID] < cur:
 				cnt += 1
@@ -143,7 +143,7 @@ def makeDecision():
 	elif helpID < 0:
 		cur = Lat[-helpID]
 		cnt = 0
-		for i in xrange(TOLERANCE):
+		for i in range(TOLERANCE):
 			wait()
 			flag = True
 			for j in range(1, NUM + 1):
@@ -159,7 +159,7 @@ def makeDecision():
 			revert(helpID)
 			#  wait()
 			cnt = 0
-			for i in xrange(TOLERANCE):
+			for i in range(TOLERANCE):
 				wait()
 				flag = True
 				for j in range(1, NUM + 1):
@@ -171,7 +171,7 @@ def makeDecision():
 				else:
 					cnt += 1
 			if cnt <= 0:
-				for i in xrange(TOLERANCE):
+				for i in range(TOLERANCE):
 					wait()
 		#  while Slack[-helpID] < 0 or LSlack[-helpID] < 0:
 		#      print("wait...")
@@ -258,7 +258,7 @@ def upSize(idx):
 	print("Upsize ", APP[idx], "(", State[idx], ")")
 	if State[idx] <= 0:
 		State[idx] = random.randint(1, 3)
-	for k in xrange(3):
+	for k in range(3):
 		if (State[idx] == 1 and adjustCore(idx, 1, False) == False) or (
 			State[idx] == 2 and adjustFreq(idx, 1) == False
 		) or (State[idx] == 3 and adjustCache(idx, 1, False) == False):
@@ -276,7 +276,7 @@ def downSize(idx):
 	victimID = 0
 	if State[idx] >= 0:
 		State[idx] = -random.randint(1, 3)
-	for k in xrange(3):
+	for k in range(3):
 		if (State[idx] == -1 and adjustCore(idx, -1, False) == False) or (
 			State[idx] == -2 and adjustFreq(idx, -1) == False
 		) or (State[idx] == -3 and adjustCache(idx, -1, False) == False):
@@ -290,7 +290,7 @@ def downSize(idx):
 def wait():
 	global INTERVAL, TIMELIMIT
 	sleep(INTERVAL)
-	for i in xrange(1, NUM + 1):
+	for i in range(1, NUM + 1):
 		if LDOWN[i] > 0:
 			LDOWN[i] -= 1
 	getLat()
@@ -303,7 +303,7 @@ def wait():
 def getLat():
 	global APP, Lat, MLat, LLSlack, LSlack, Slack, QoS, NUM
 
-	for i in xrange(1, NUM + 1):
+	for i in range(1, NUM + 1):
 		app = APP[i]
 		if APP[i][-1] == "2":
 			app = APP[i][:-1]
@@ -344,10 +344,10 @@ def adjustCore(idx, num, hasVictim):
 		if len(CORES[idx]) <= -num:
 			return False
 		if hasVictim == False or victimID == 0:
-			for i in xrange(-num):
+			for i in range(-num):
 				ECORES.append(CORES[idx].pop())
 		else:
-			for i in xrange(-num):
+			for i in range(-num):
 				CORES[victimID].append(CORES[idx].pop())
 			propogateCore(victimID)
 	else:
@@ -356,7 +356,7 @@ def adjustCore(idx, num, hasVictim):
 			CORES[idx].append(ECORES.pop())
 		else:
 			victimID = 0
-			for i in xrange(1, NUM + 1):
+			for i in range(1, NUM + 1):
 				if i != idx and len(
 					CORES[i]
 				) > 1 and (victimID == 0 or Slack[i] > Slack[victimID]):
@@ -384,7 +384,7 @@ def adjustFreq(idx, num):
 		if FREQ[idx] == 2300:
 			return False  # Shuang
 			victimID = 0
-			for i in xrange(1, NUM + 1):
+			for i in range(1, NUM + 1):
 				if i != idx and FREQ[i] > 1200 and (
 					victimID == 0 or Slack[i] > Slack[victimID]
 				):
@@ -418,7 +418,7 @@ def adjustCache(idx, num, hasVictim):
 			EWAY -= 1
 		else:
 			victimID = 0
-			for i in xrange(1, NUM + 1):
+			for i in range(1, NUM + 1):
 				if i != idx and WAY[i] > 1 and (
 					victimID == 0 or Slack[i] > Slack[victimID]
 				):
@@ -437,7 +437,7 @@ def adjustCache(idx, num, hasVictim):
 def propogateCore(idx=None):
 	global APP, CORES, NUM
 	if idx == None:
-		for i in xrange(1, NUM + 1):
+		for i in range(1, NUM + 1):
 			print('    Change Core of', APP[i], ':', CORES[i])
 			cmd = "echo {} | sudo tee /sys/fs/cgroup/cpuset/{}/cpuset.cpus".format(
 				coreStr(CORES[idx]),
@@ -460,7 +460,7 @@ def propogateCore(idx=None):
 def propogateCache(idx=None):
 	global CORES, WAY, NUM, APP
 	ways = 0
-	for i in xrange(1, NUM + 1):
+	for i in range(1, NUM + 1):
 		if idx == None or i >= idx:
 			subprocess.call(
 				["pqos", "-e",
@@ -492,7 +492,7 @@ def propogateFreq(idx=None):
 			stdout=FF,
 			stderr=FF
 		)
-		for i in xrange(1, NUM + 1):
+		for i in range(1, NUM + 1):
 			print('    Change Frequency of', APP[i], ':', FREQ[i])
 			if FREQ[i] <= 2200:
 				subprocess.call(
