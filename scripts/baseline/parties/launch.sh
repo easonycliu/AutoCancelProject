@@ -65,7 +65,7 @@ function run_once {
 	# Finish set up cgroup for PARTIES
 	
 	# Launch PARTIES
-	./parties.py $AUTOCANCEL_HOME/scripts/baseline/parties/config.txt `nproc` 10000
+	./parties.py $AUTOCANCEL_HOME/scripts/baseline/parties/config.txt `nproc` 10000 > /dev/null &
 	# Finish launch PARTIES
 	
 	docker run --rm --net=host -v $AUTOCANCEL_HOME/autocancel_exp/$app_exp:/root -w /root easonliu12138/es_py_env:v1.1 /root/scripts/$case_name.sh $2 ${BASELINE}_${START_TIME} $BASELINE $BASELINE:$(echo ${cgroup_names[@]} | tr " " ":")
