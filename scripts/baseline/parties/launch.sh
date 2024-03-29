@@ -79,7 +79,7 @@ function run_once {
 	./parties.py $AUTOCANCEL_HOME/scripts/baseline/parties/config.txt `nproc` 10000
 	# Finish launch PARTIES
 	
-	docker run --rm --net=host -v $AUTOCANCEL_HOME/autocancel_exp/solr_exp:/root -w /root easonliu12138/es_py_env:v1.1 /root/scripts/$case_name.sh $2 ${BASELINE}_${START_TIME} $BASELINE
+	docker run --rm --net=host -v $AUTOCANCEL_HOME/autocancel_exp/solr_exp:/root -w /root easonliu12138/es_py_env:v1.1 /root/scripts/$case_name.sh $2 ${BASELINE}_${START_TIME} $BASELINE $BASELINE
 	sleep 10
 	
 	kill -2 $(ps | grep parties.py | awk '{print $1}')

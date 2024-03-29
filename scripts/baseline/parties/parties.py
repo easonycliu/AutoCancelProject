@@ -17,22 +17,11 @@ core_num = 8
 if (len(sys.argv) > 2):
 	core_num = int(sys.argv[2])
 
-# QoS target of each application, in nanoseconds.
-QOS = {
-	"moses": 15000000,
-	"xapian": 5000000,
-	"nginx": 10000000,
-	"sphinx": 2500000000,
-	"memcached": 600000,
-	"mongodb": 300000000
-}
-
 INTERVAL = 0.1  # Frequency of monitoring, unit is second
 TIMELIMIT = 200  # How long to run this controller, unit is in second.
 REST = 100
 NUM = 0  # Number of colocated applications
 APP = [None for i in range(10)]  # Application names
-IP = [None for i in range(10)]  # IP of clients that run applications
 QoS = [None for i in range(10)]  # Target QoS of each application
 ECORES = [i for i in range(0, core_num, 1)] # unallocated cores
 CORES = [None for i in range(int(core_num / 2))] # CPU allocation
@@ -87,12 +76,10 @@ def init():
 		assert len(lines) >= (NUM + 1)
 		for i in range(1, NUM + 1, 1):
 			words = lines[i].split()
-			assert len(words) == 3
+			assert len(words) == 2
 			CORES[i] = []
 			APP[i] = words[0]
-			IP[i] = words[1]
-			assert APP[i] in QOS
-			QoS[i] = QOS[APP[i]]
+			QoS[i] = int(words[1])
 			WAY[i] = 20 / NUM
 			MLat[i] = collections.deque(maxlen=(int(1.0 / INTERVAL)))
 	# Initialize resource parititioning
@@ -305,10 +292,8 @@ def getLat():
 
 	for i in range(1, NUM + 1):
 		app = APP[i]
-		if APP[i][-1] == "2":
-			app = APP[i][:-1]
 		p = subprocess.Popen(
-			"curl http://%s:84/%s/0.txt | tail -1" % (IP[i], app),
+			"cat {} | tail -1".format(os.path.join(os.environ["AUTOCANCEL_HOME"], "autocancel_exp", "solr_exp")),
 			shell=True,
 			stdout=subprocess.PIPE,
 			stderr=FF,
