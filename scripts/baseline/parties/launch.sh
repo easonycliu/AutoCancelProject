@@ -8,8 +8,6 @@ export BASELINE=parties
 export START_TIME=$(date +%Y_%m_%d_%H_%M_%S)
 export START_DATE=$(date +%Y_%m_%d)
 
-client_num=2
-
 cgroup_num=$(cat config.txt | head -1)
 cgroup_names=($(cat config.txt | tail -n $cgroup_num | awk '{print $1}'))
 

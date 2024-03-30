@@ -304,6 +304,7 @@ def getLat():
 			bufsize=0
 		)
 		out, err = p.communicate()
+		out = out.decode("utf-8")
 		LLSlack[i] = Slack[i]
 		if out != '' and (not ('html' in out)):
 			Lat[i] = int(out)
