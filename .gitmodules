@@ -14,3 +14,7 @@
 	path = solr
 	url = git@github.com:liuyc1515/solr.git
     branch = autocancel
+[submodule "psandbox"]
+	path = scripts/baseline/psandbox/toy_sandbox
+	url = git@github.com:liuyc1515/AutoCancelToySandbox.git
+    branch = autocancel
