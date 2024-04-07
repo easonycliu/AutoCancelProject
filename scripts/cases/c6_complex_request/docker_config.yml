@@ -21,7 +21,7 @@ services:
       - TZ=Asia/Shanghai
       - "SOLR_JAVA_MEM=-Xms16g -Xmx16g"
       - "SOLR_HOME=/var/solr/data"
-      - "SOLR_OPTS=-Ddefault.policy=$DEFAULT_POLICY -Dpredict.progress=$PREDICT_PROGRESS -Dcancel.enable=$CANCEL_ENABLE -Dautocancel.log=$AUTOCANCEL_LOG"
+      - "SOLR_OPTS=-Dautocancel.app=solr -Ddefault.policy=$DEFAULT_POLICY -Dpredict.progress=$PREDICT_PROGRESS -Dcancel.enable=$CANCEL_ENABLE -Dautocancel.log=$AUTOCANCEL_LOG"
     ports:
       - 8983:8983/tcp
     deploy:
