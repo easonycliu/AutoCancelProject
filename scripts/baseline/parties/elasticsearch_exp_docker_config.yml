@@ -19,7 +19,7 @@ services:
       # - $AUTOCANCEL_HOME/autocancel_exp/elasticsearch_exp/cluster/config/log4j2.properties:/usr/share/elasticsearch/config/log4j2.properties
     environment:
       - TZ=Asia/Shanghai
-      - "ES_JAVA_OPTS=-Xms${HEAP_SIZE}g -Xmx${HEAP_SIZE}g -ea:org.elasticsearch.autocancel... -Djava.security.policy=/usr/share/elasticsearch/config/java.policy -Dautocancel.log=$AUTOCANCEL_LOG -Dautocancel.start=$AUTOCANCEL_START -XX:InitiatingHeapOccupancyPercent=10 -agentpath:/usr/share/elasticsearch/data/liblagent.so"
+      - "ES_JAVA_OPTS=-Xms${HEAP_SIZE}g -Xmx${HEAP_SIZE}g -ea:autocancel... -Djava.security.policy=/usr/share/elasticsearch/config/java.policy -Dautocancel.log=$AUTOCANCEL_LOG -Dautocancel.start=$AUTOCANCEL_START -XX:InitiatingHeapOccupancyPercent=10 -agentpath:/usr/share/elasticsearch/data/liblagent.so"
     ports:
       - 9200:9200/tcp
     deploy:
