@@ -33,12 +33,12 @@ function run_once {
     local client_num=$(echo ${case_to_script_map["$1"]} | awk '{print $5}')
 
 	env_args="USER_ID=$(id -u) GROUP_ID=$(id -g) AUTOCANCEL_LOG=$BASELINE AUTOCANCEL_START=false CORE_NUM=$core_num HEAP_SIZE=$heap_size"
-	bash -c "$env_args docker compose -f $AUTOCANCEL_HOME/scripts/baseline/parties/${app_exp}_docker_config.yml down"
+	bash -c "$env_args docker compose -f $AUTOCANCEL_HOME/scripts/baseline/psandbox/${app_exp}_docker_config.yml down"
 	
 	docker stop single_node || true
 	docker rm single_node || true
 	
-	bash -c "$env_args docker compose -f $AUTOCANCEL_HOME/scripts/baseline/parties/${app_exp}_docker_config.yml up &"
+	bash -c "$env_args docker compose -f $AUTOCANCEL_HOME/scripts/baseline/psandbox/${app_exp}_docker_config.yml up &"
 	sleep 60
 	
 	docker run --rm --net=host -v $AUTOCANCEL_HOME/autocancel_exp/$app_exp:/root -w /root easonliu12138/es_py_env:v1.1 /root/scripts/warmup.sh
@@ -51,7 +51,7 @@ function run_once {
 	mv $AUTOCANCEL_HOME/autocancel_exp/$app_exp/${BASELINE}_${START_TIME}_latency $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${BASELINE}_${START_TIME}/${BASELINE}_latency.csv
 	mv $AUTOCANCEL_HOME/autocancel_exp/$app_exp/${BASELINE}_${START_TIME}_throughput $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${BASELINE}_${START_TIME}/${BASELINE}_throughput.csv
 	
-	bash -c "$env_args docker compose -f $AUTOCANCEL_HOME/scripts/baseline/parties/${app_exp}_docker_config.yml down"
+	bash -c "$env_args docker compose -f $AUTOCANCEL_HOME/scripts/baseline/psandbox/${app_exp}_docker_config.yml down"
 }
 
 if [[ "$1" =~ ^c[1-7]$ ]]; then
