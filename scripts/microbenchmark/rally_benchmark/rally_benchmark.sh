@@ -45,7 +45,7 @@ function run_once {
     for j in $(seq 1 1 $test_times); do
         BENCHMARK_START_TIME=$(date +%Y_%m_%d_%H_%M_%S)
 		docker run --rm --net=host -v $AUTOCANCEL_HOME/scripts/data/rally_home:/home/rally/.rally -t rally_exp:v1.0 \
-			esrally race --track=nyc_taxis --pipeline=benchmark-only --target-hosts=127.0.0.1:9200 --report-file=/home/rally/.rally/report-${5}-${BENCHMARK_START_TIME}.csv --report-format=csv
+			esrally race --track=pmc --pipeline=benchmark-only --target-hosts=127.0.0.1:9200 --report-file=/home/rally/.rally/report-${5}-${BENCHMARK_START_TIME}.csv --report-format=csv
 
         cp $AUTOCANCEL_HOME/scripts/data/rally_home/report-${5}-${BENCHMARK_START_TIME}.csv $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${MICROBENCHMARK}_${START_TIME}
 
