@@ -9,9 +9,13 @@ export START_TIME=$(date +%Y_%m_%d_%H_%M_%S)
 export START_DATE=$(date +%Y_%m_%d)
 
 client_num_list=(1 16 32 64 128)
-test_times=10
+test_times=1
 
 sudo sysctl -w vm.max_map_count=262144
+
+if [ $(docker images | grep "rally_exp" | wc -l) -eq 0 ]; then
+    docker build --build-arg UID=$(id -u) -t rally_exp:v1.0 .
+fi
 
 if [ ! -d "$AUTOCANCEL_HOME/scripts/data/rally" ]; then
     mkdir $AUTOCANCEL_HOME/scripts/data/rally
@@ -41,7 +45,7 @@ function run_once {
     for j in $(seq 1 1 $test_times); do
         BENCHMARK_START_TIME=$(date +%Y_%m_%d_%H_%M_%S)
 		docker run --rm --net=host --user 0:0 -v $AUTOCANCEL_HOME/scripts/data/rally_home:/rally/.rally elastic/rally:2.10.0 \
-        race --track=nyc_taxis --test-mode --pipeline=benchmark-only --target-hosts=127.0.0.1:9200 --report-file=/rally/.rally/report-${5}-${BENCHMARK_START_TIME}.csv --report-format=csv
+			race --track=nyc_taxis --test-mode --pipeline=benchmark-only --target-hosts=127.0.0.1:9200 --report-file=/rally/.rally/report-${5}-${BENCHMARK_START_TIME}.csv --report-format=csv
 
         cp $AUTOCANCEL_HOME/scripts/data/rally_home/report-${5}-${BENCHMARK_START_TIME}.csv $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${MICROBENCHMARK}_${START_TIME}
 
