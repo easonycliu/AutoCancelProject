@@ -19,7 +19,7 @@ case_to_script_map["c7"]="solr_exp stat_fields 4.00 16 8"
 
 sudo sysctl -w vm.max_map_count=262144
 
-docker run --rm -v $AUTOCANCEL_HOME/scripts/baseline/psp/psp_src:/root -w /root easonliu12138/psp_build:v1.0 cmake -B build && cmake --build build
+docker run --rm -v $AUTOCANCEL_HOME/scripts/baseline/psp/psp_src:/root -w /root easonliu12138/psp_build:v1.0 bash -c "rm -rf build && cmake -B build && cmake --build build"
 
 if [ ! -d "$AUTOCANCEL_HOME/scripts/logs/$START_DATE" ]; then
     mkdir $AUTOCANCEL_HOME/scripts/logs/$START_DATE
