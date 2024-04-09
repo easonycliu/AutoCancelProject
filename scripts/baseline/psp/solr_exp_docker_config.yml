@@ -21,7 +21,7 @@ services:
       - TZ=Asia/Shanghai
       - "SOLR_JAVA_MEM=-Xms${HEAP_SIZE}g -Xmx${HEAP_SIZE}g"
       - "SOLR_HOME=/var/solr/data"
-      - "SOLR_OPTS=-Dsandbox.enable=true -Dautocancel.log=$AUTOCANCEL_LOG -Dautocancel.start=$AUTOCANCEL_START"
+      - "SOLR_OPTS=-Dautocancel.app=solr -Dautocancel.log=$AUTOCANCEL_LOG -Dautocancel.start=$AUTOCANCEL_START"
     ports:
       - 18983:8983/tcp
     deploy:
