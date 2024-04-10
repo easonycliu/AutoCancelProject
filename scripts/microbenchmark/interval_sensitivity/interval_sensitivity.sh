@@ -39,7 +39,7 @@ function run_once {
     local core_num=$(echo ${case_to_script_map["$5"]} | awk '{print $3}')
     local heap_size=$(echo ${case_to_script_map["$5"]} | awk '{print $4}')
     local client_num=$(echo ${case_to_script_map["$5"]} | awk '{print $5}')
-    local case_dir=$(echo ${case_to_script_map["$1"]} | awk '{print $6}')
+    local case_dir=$(echo ${case_to_script_map["$5"]} | awk '{print $6}')
 
 	local env_args="USER_ID=$(id -u) GROUP_ID=$(id -g) DEFAULT_POLICY=$1 PREDICT_PROGRESS=$2 CANCEL_ENABLE=$3 AUTOCANCEL_LOG=$4 UPDATE_INTERVAL=$6 CORE_NUM=$core_num HEAP_SIZE=$heap_size CASE_DIR=$case_dir"
 
