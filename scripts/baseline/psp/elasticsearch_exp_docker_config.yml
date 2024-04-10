@@ -15,7 +15,7 @@ services:
       - $AUTOCANCEL_HOME/scripts/microbenchmark/es_config.yml:/usr/share/elasticsearch/config/elasticsearch.yml
       - $AUTOCANCEL_HOME/autocancel_exp/elasticsearch_exp/cluster/config/java.policy:/usr/share/elasticsearch/config/java.policy
       - $AUTOCANCEL_HOME/autocancel_exp/elasticsearch_exp/cluster/log/single_node:/usr/share/elasticsearch/logs
-      - $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${MICROBENCHMARK}_${START_TIME}:/tmp/autocancel
+      - $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${BASELINE}_${START_TIME}:/tmp/autocancel
       # - $AUTOCANCEL_HOME/autocancel_exp/elasticsearch_exp/cluster/config/log4j2.properties:/usr/share/elasticsearch/config/log4j2.properties
     environment:
       - TZ=Asia/Shanghai
