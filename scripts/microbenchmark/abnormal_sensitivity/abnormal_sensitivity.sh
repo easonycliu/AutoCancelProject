@@ -9,13 +9,13 @@ export START_TIME=$(date +%Y_%m_%d_%H_%M_%S)
 export START_DATE=$(date +%Y_%m_%d)
 
 declare -A case_to_script_map
-case_to_script_map["c1"]="elasticsearch_exp multiclient_request_cache_evict 8.00 16 5"
-# case_to_script_map["c2"]="elasticsearch_exp multiclient_update_by_query 8.00 16 8"
-case_to_script_map["c3"]="elasticsearch_exp multiclient_nested_aggs 8.00 8 8"
-case_to_script_map["c4"]="elasticsearch_exp multiclient_complex_boolean 8.00 16 5"
-case_to_script_map["c5"]="elasticsearch_exp multiclient_bulk_large_document 8.00 16 5"
-case_to_script_map["c6"]="solr_exp complex_boolean_script 2.00 16 2"
-case_to_script_map["c7"]="solr_exp stat_fields 4.00 16 8"
+case_to_script_map["c1"]="elasticsearch_exp multiclient_request_cache_evict 8.00 16 5 c1_cache_evict"
+# case_to_script_map["c2"]="elasticsearch_exp multiclient_update_by_query 8.00 16 8 c2_byquery"
+case_to_script_map["c3"]="elasticsearch_exp multiclient_nested_aggs 8.00 8 8 c3_nest_agg"
+case_to_script_map["c4"]="elasticsearch_exp multiclient_complex_boolean 8.00 16 5 c4_complex_boolean"
+case_to_script_map["c5"]="elasticsearch_exp multiclient_bulk_large_document 8.00 16 5 c5_bulk_document"
+case_to_script_map["c6"]="solr_exp complex_boolean_script 2.00 16 2 c6_complex_request"
+case_to_script_map["c7"]="solr_exp stat_fields 4.00 16 8 c7_stat_fields"
 
 sudo sysctl -w vm.max_map_count=262144
 
@@ -39,8 +39,9 @@ function run_once {
     local core_num=$(echo ${case_to_script_map["$5"]} | awk '{print $3}')
     local heap_size=$(echo ${case_to_script_map["$5"]} | awk '{print $4}')
     local client_num=$(echo ${case_to_script_map["$5"]} | awk '{print $5}')
+    local case_dir=$(echo ${case_to_script_map["$1"]} | awk '{print $6}')
 
-	local env_args="USER_ID=$(id -u) GROUP_ID=$(id -g) DEFAULT_POLICY=$1 PREDICT_PROGRESS=$2 CANCEL_ENABLE=$3 AUTOCANCEL_LOG=$4 ABNORMAL_PORTION=$6 ABNORMAL_ABSOLUTE=$7 CORE_NUM=$core_num HEAP_SIZE=$heap_size"
+	local env_args="USER_ID=$(id -u) GROUP_ID=$(id -g) DEFAULT_POLICY=$1 PREDICT_PROGRESS=$2 CANCEL_ENABLE=$3 AUTOCANCEL_LOG=$4 ABNORMAL_PORTION=$6 ABNORMAL_ABSOLUTE=$7 CORE_NUM=$core_num HEAP_SIZE=$heap_size CASE_DIR=$case_dir"
 
 	bash -c "$env_args docker compose -f $AUTOCANCEL_HOME/scripts/microbenchmark/abnormal_sensitivity/${app_exp}_docker_config.yml down"
 

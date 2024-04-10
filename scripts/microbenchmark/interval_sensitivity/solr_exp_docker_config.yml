@@ -14,7 +14,7 @@ services:
       - $AUTOCANCEL_HOME/solr/solr/packaging/build/solr-9.0.0-SNAPSHOT:/opt/solr-9.0.0:rwx
       - $AUTOCANCEL_HOME/scripts/data/solr:/var/solr/data:rw
       - $AUTOCANCEL_HOME/autocancel_exp/solr_exp/cluster/log/single_node:/var/solr/logs:rw
-      - $AUTOCANCEL_HOME/scripts/cases/c6_complex_request/solr_config.xml:/var/solr/data/solr.xml:rw
+      - $AUTOCANCEL_HOME/scripts/cases/${CASE_DIR}/solr_config.xml:/var/solr/data/solr.xml:rw
       - $AUTOCANCEL_HOME/solr/solr/packaging/build/solr-9.0.0-SNAPSHOT/server/resources/log4j2.xml:/var/solr/log4j2.xml:rw
       - $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${MICROBENCHMARK}_${START_TIME}:/tmp/autocancel
     environment:

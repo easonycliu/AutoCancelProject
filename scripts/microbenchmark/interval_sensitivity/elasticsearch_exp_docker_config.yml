@@ -12,7 +12,7 @@ services:
     volumes:
       - $AUTOCANCEL_HOME/elasticsearch/build/distribution/local/elasticsearch-8.9.0-SNAPSHOT:/usr/share/elasticsearch
       - $AUTOCANCEL_HOME/scripts/data/elasticsearch:/usr/share/elasticsearch/data
-      - $AUTOCANCEL_HOME/scripts/microbenchmark/es_config.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - $AUTOCANCEL_HOME/scripts/cases/${CASE_DIR}/es_config.yml:/usr/share/elasticsearch/config/elasticsearch.yml
       - $AUTOCANCEL_HOME/autocancel_exp/elasticsearch_exp/cluster/config/java.policy:/usr/share/elasticsearch/config/java.policy
       - $AUTOCANCEL_HOME/autocancel_exp/elasticsearch_exp/cluster/log/single_node:/usr/share/elasticsearch/logs
       - $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${MICROBENCHMARK}_${START_TIME}:/tmp/autocancel
