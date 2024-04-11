@@ -14,7 +14,7 @@ cgroup_names=($(cat config.txt | tail -n $cgroup_num | awk '{print $1}'))
 declare -A case_to_script_map
 case_to_script_map["c1"]="elasticsearch_exp multiclient_request_cache_evict 8.00 16 5 c1_cache_evict"
 # case_to_script_map["c2"]="elasticsearch_exp multiclient_update_by_query 8.00 16 8 c2_byquery"
-case_to_script_map["c3"]="elasticsearch_exp multiclient_nested_aggs 8.00 8 8 c3_nest_agg"
+case_to_script_map["c3"]="elasticsearch_exp multiclient_nested_aggs 8.00 4 8 c3_nest_agg"
 case_to_script_map["c4"]="elasticsearch_exp multiclient_complex_boolean 12.00 16 5 c4_complex_boolean"
 case_to_script_map["c5"]="elasticsearch_exp multiclient_bulk_large_document 8.00 16 5 c5_bulk_document"
 case_to_script_map["c6"]="solr_exp complex_boolean_script 2.00 16 2 c6_complex_request"
