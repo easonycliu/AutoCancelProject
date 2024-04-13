@@ -35,3 +35,7 @@ if [ "$(dpkg -l | grep " gh ")" == "" ]; then
 	sudo apt install gh -y
 fi
 
+if [ "$(dpkg -l | grep "cgroup-tools")" == "" ]; then
+	sudo apt install cgroup-tools
+fi
+
