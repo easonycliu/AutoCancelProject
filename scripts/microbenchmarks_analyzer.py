@@ -105,16 +105,12 @@ def get_exp_settings(log_files, mode):
 	return exp_settings
 
 
-if __name__ == "__main__":
-	if len(sys.argv) < 2:
-		print("Usage: ./log_analyzer.py LOG_DIR1,LOG_DIR2,...")
-
+def analyze_sensitivity(log_dirs):
 	experiment_modes = [
 		"base_w_predict", "base_wo_predict", "moo_w_predict", "moo_wo_predict",
 		"normal", "wo_cancel"
 	]
 
-	log_dirs = sys.argv[1].split(',')
 	avg_throughput_dict = {mode: {} for mode in experiment_modes}
 	avg_latency_dict = {mode: {} for mode in experiment_modes}
 	p99_latency_dict = {mode: {} for mode in experiment_modes}
@@ -190,17 +186,104 @@ if __name__ == "__main__":
 				recover_time_dict[mode][exp_setting] = get_recover_time(
 					lib_log_list
 				)
+	return avg_throughput_dict, avg_latency_dict, p99_latency_dict, cancel_time_dict, recover_time_dict
 
-	for mode in experiment_modes:
+
+def show_sensitivity_result(
+	avg_throughput_dict, avg_latency_dict, p99_latency_dict, cancel_time_dict,
+	recover_time_dict
+):
+	for mode in avg_throughput_dict.keys():
 		exp_settings = avg_throughput_dict[mode].keys()
 		for exp_setting in exp_settings:
 			print(
-					"mode: {}, settings: {}, Avg Throughput: {}, Avg Latency: {}, P99 Latency: {}, Cancel time: {}, Recover time: {}"
+				"Mode: {}, Settings: {}, Avg Throughput: {}, Avg Latency: {}, P99 Latency: {}, Cancel time: {}, Recover time: {}"
 				.format(
-					mode, exp_setting, np.mean(avg_throughput_dict[mode][exp_setting]),
+					mode, exp_setting,
+					np.mean(avg_throughput_dict[mode][exp_setting]),
 					np.mean(avg_latency_dict[mode][exp_setting]),
 					np.mean(p99_latency_dict[mode][exp_setting]),
 					np.mean(cancel_time_dict[mode][exp_setting]),
 					np.mean(recover_time_dict[mode][exp_setting])
 				)
 			)
+
+
+def analyze_overhead(log_dirs):
+	avg_throughput_dict = {"true": {}, "false": {}}
+	p99_latency_dict = {"true": {}, "false": {}}
+	for log_dir in log_dirs:
+		microbenchmark = get_log_dir_prefix(log_dir)
+		log_dir_wo_bench = remove_prefix(log_dir, "{}_".format(microbenchmark))
+		year = log_dir_wo_bench.split('_')[0]
+		month = log_dir_wo_bench.split('_')[1]
+		day = log_dir_wo_bench.split('_')[2]
+		log_dir_abs = os.path.join(
+			os.getcwd(), "logs", "{}_{}_{}".format(year, month, day), log_dir
+		)
+		if microbenchmark == "rally_benchmark":
+			log_files = os.listdir(log_dir_abs)
+			for log_file in log_files:
+				if '-' not in log_file:
+					continue
+				enable_autocancel = log_file.split('-')[1]
+				benchmark_result_df = pd.read_csv(
+					os.path.join(log_dir_abs, log_file)
+				)
+				benchmark_result_list = benchmark_result_df.values.tolist()
+				for benchmark_result in benchmark_result_list:
+					if benchmark_result[0] == "99th percentile latency":
+						p99_latency_dict[enable_autocancel][
+							benchmark_result[1]] = "{} {}".format(
+								benchmark_result[2], benchmark_result[3]
+							)
+					if benchmark_result[0] == "Mean Throughput":
+						avg_throughput_dict[enable_autocancel][
+							benchmark_result[1]] = "{} {}".format(
+								benchmark_result[2], benchmark_result[3]
+							)
+		elif microbenchmark == "solr_bench":
+			pass
+
+	return avg_throughput_dict, p99_latency_dict
+
+
+def show_overhead_result(avg_throughput_dict, p99_latency_dict):
+	for metrics in avg_throughput_dict["true"].keys():
+		print(
+			"Enable: {}, Metrics: {}, Avg Throughput: {}, P99 Latency: {}".
+			format(
+				"true", metrics, avg_throughput_dict["true"][metrics],
+				p99_latency_dict["true"][metrics]
+			)
+		)
+		print(
+			"Enable: {}, Metrics: {}, Avg Throughput: {}, P99 Latency: {}".
+			format(
+				"false", metrics, avg_throughput_dict["false"][metrics],
+				p99_latency_dict["false"][metrics]
+			)
+		)
+		print("")
+
+
+if __name__ == "__main__":
+	if len(sys.argv) < 2:
+		print("Usage: ./log_analyzer.py LOG_DIR1,LOG_DIR2,...")
+
+	log_dirs = sys.argv[1].split(',')
+	if len(log_dirs) == 0:
+		exit()
+
+	microbenchmark = get_log_dir_prefix(log_dirs[0])
+	if microbenchmark == "abnormal_sensitivity" or microbenchmark == "interval_sensitivity":
+		avg_throughput_dict, avg_latency_dict, p99_latency_dict, cancel_time_dict, recover_time_dict = analyze_sensitivity(
+			log_dirs
+		)
+		show_sensitivity_result(
+			avg_throughput_dict, avg_latency_dict, p99_latency_dict,
+			cancel_time_dict, recover_time_dict
+		)
+	elif microbenchmark == "rally_benchmark" or microbenchmark == "solr_bench":
+		avg_throughput_dict, p99_latency_dict = analyze_overhead(log_dirs)
+		show_overhead_result(avg_throughput_dict, p99_latency_dict)
