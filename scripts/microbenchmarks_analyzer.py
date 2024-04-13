@@ -2,6 +2,7 @@
 
 import os
 import sys
+import json
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -243,7 +244,18 @@ def analyze_overhead(log_dirs):
 								benchmark_result[2], benchmark_result[3]
 							)
 		elif microbenchmark == "solr_bench":
-			pass
+			log_files = os.listdir(log_dir_abs)
+			for log_file in log_files:
+				if '_' not in log_file:
+					continue
+				enable_autocancel = log_file.split('_')[1]
+				benchmark_result_file = open(os.path.join(log_dir_abs, log_file))
+				benchmark_result_dict = json.load(benchmark_result_file)
+				benchmark_result_file.close()
+				p99_latency_dict[enable_autocancel]["Query"] = "{} ms".format(benchmark_result_dict["task2"][0]["timings"][0]["99th"])
+				total_queries = int(benchmark_result_dict["task2"][0]["timings"][0]["total-queries"])
+				total_time = int(benchmark_result_dict["task2"][0]["timings"][0]["total-time"]) / 1000
+				avg_throughput_dict[enable_autocancel]["Query"] = "{} qps".format(total_queries / total_time)
 
 	return avg_throughput_dict, p99_latency_dict
 
