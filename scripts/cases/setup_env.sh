@@ -36,6 +36,6 @@ if [ "$(dpkg -l | grep " gh ")" == "" ]; then
 fi
 
 if [ "$(dpkg -l | grep "cgroup-tools")" == "" ]; then
-	sudo apt install cgroup-tools
+	sudo apt install cgroup-tools intel-cmt-cat
 fi
 
