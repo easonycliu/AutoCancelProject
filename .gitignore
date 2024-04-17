@@ -22,6 +22,8 @@ note
 
 .bash_history
 
+__pycache__
+
 # External repos for exp use
 /solr-bench
 /PARTIES

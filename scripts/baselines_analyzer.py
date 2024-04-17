@@ -6,20 +6,10 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
+from metrics_auxiliary import get_average_throughput, get_average_latency, get_p99_latency
+
 IGNORE_HEAD = 5
 IGNORE_TAIL = 1
-
-
-def get_average_throughput(log_list):
-	return np.mean(log_list)
-
-
-def get_average_latency(log_list):
-	return np.mean(log_list)
-
-
-def get_p99_latency(log_list):
-	return np.sort(log_list)[int(len(log_list) * 0.99)]
 
 
 if __name__ == "__main__":
