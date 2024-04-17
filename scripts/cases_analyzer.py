@@ -71,8 +71,8 @@ if __name__ == "__main__":
 		print("Usage: ./log_analyzer.py LOG_DIR1,LOG_DIR2,...")
 
 	experiment_modes = [
-		"base_w_predict", "base_wo_predict", "moo_w_predict", "moo_wo_predict",
-		"normal", "wo_cancel"
+		"base_wo_predict", "base_w_predict", "moo_wo_predict", "moo_w_predict",
+		"wo_cancel", "normal"
 	]
 
 	log_dirs = sys.argv[1].split(',')

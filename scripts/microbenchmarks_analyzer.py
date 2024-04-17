@@ -108,8 +108,8 @@ def get_exp_settings(log_files, mode):
 
 def analyze_sensitivity(log_dirs):
 	experiment_modes = [
-		"base_w_predict", "base_wo_predict", "moo_w_predict", "moo_wo_predict",
-		"normal", "wo_cancel"
+		"base_wo_predict", "base_w_predict", "moo_wo_predict", "moo_w_predict",
+		"wo_cancel", "normal"
 	]
 
 	avg_throughput_dict = {mode: {} for mode in experiment_modes}
