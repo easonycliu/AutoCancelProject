@@ -76,7 +76,7 @@ if __name__ == "__main__":
 			cancel_time_dict[mode].append(
 				0 if mode == "wo_cancel" else get_cancel_time(lib_log_list)
 			)
-			recover_time_dict[mode].append(get_recover_time(lib_log_list))
+			recover_time_dict[mode].append(get_recover_time(throughput_log_df.values.squeeze()))
 			draw_throught(
 				lib_log_list,
 				os.path.join(

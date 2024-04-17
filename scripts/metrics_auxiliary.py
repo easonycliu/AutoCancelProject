@@ -1,6 +1,10 @@
+import heapq
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+
+RECOVER_PERFORMANCE_DROP_PORTION = 0.3
+RECOVER_PERFORMANCE_DROP_ABSOLUTE = 500
 
 class RecoverTimeStabilizer:
 
@@ -20,6 +24,9 @@ class RecoverTimeStabilizer:
 		return self.buffer[0]
 
 
+def is_recovered(log_list, index):
+	return (np.mean(heapq.nlargest(8, log_list)) * (1 - RECOVER_PERFORMANCE_DROP_PORTION)) < log_list[index] and (np.mean(heapq.nlargest(8, log_list)) - RECOVER_PERFORMANCE_DROP_ABSOLUTE) < log_list[index];
+
 def get_cancel_time(log_list):
 	cancel_time = 0
 	for x in log_list:
@@ -32,7 +39,7 @@ def get_recover_time(log_list):
 	recover_time = 0
 	recover_time_stabilizer = RecoverTimeStabilizer(1)
 	recover_list = [
-		recover_time_stabilizer.get(x[3] == "true") for x in log_list
+		recover_time_stabilizer.get(is_recovered(log_list, index)) for index in range(len(log_list))
 	]
 	for recovered in recover_list:
 		if not recovered:

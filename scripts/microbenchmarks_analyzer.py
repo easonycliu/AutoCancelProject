@@ -135,7 +135,7 @@ def analyze_sensitivity(log_dirs):
 					exp_setting
 				] = 0 if mode == "wo_cancel" else get_cancel_time(lib_log_list)
 				recover_time_dict[mode][exp_setting] = get_recover_time(
-					lib_log_list
+					throughput_log_df.values.squeeze()
 				)
 	return avg_throughput_dict, avg_latency_dict, p99_latency_dict, cancel_time_dict, recover_time_dict
 
