@@ -139,14 +139,13 @@ if __name__ == "__main__":
 				)
 			)
 
-	for mode in experiment_modes:
-		print(
-			"Mode: {}, Avg Throughput: {}, Avg Latency: {}, P99 Latency: {}, Cancel Time: {}, Recover Time: {}"
-			.format(
-				mode, np.mean(avg_throughput_dict[mode]),
-				np.mean(avg_latency_dict[mode]
-						), np.mean(p99_latency_dict[mode]),
-				np.mean(cancel_time_dict[mode]),
-				np.mean(recover_time_dict[mode])
-			)
-		)
+	output_dict = {
+		"Throughput (QPS)": [round(np.mean(avg_throughput_dict[mode]), 2) for mode in experiment_modes],
+		"Mean Latency (ms)": [round(np.mean(avg_latency_dict[mode]) / 1000000, 2) for mode in experiment_modes],
+		"P99 Latency (ms)": [round(np.mean(p99_latency_dict[mode]) / 1000000, 2) for mode in experiment_modes],
+		"Cancel Time": [np.mean(cancel_time_dict[mode]) for mode in experiment_modes],
+		"Recover Time": [np.mean(recover_time_dict[mode]) for mode in experiment_modes]
+	}
+	output_df = pd.DataFrame(output_dict, index=experiment_modes)
+	output_df.to_markdown(buf=sys.stdout)
+	print("")
