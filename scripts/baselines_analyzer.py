@@ -64,13 +64,11 @@ if __name__ == "__main__":
 				get_p99_latency(latency_log_df.values.squeeze())
 			)
 
-	for case in experiment_cases:
-		print(
-			"case: {}, Avg Throughput: {}, Avg Latency: {}, P99 Latency: {}"
-			.format(
-				case, 
-				np.mean(avg_throughput_dict[case]),
-				np.mean(avg_latency_dict[case]),
-				np.mean(p99_latency_dict[case])
-			)
-		)
+	output_dict = {
+		"Throughput (QPS)": [round(np.mean(avg_throughput_dict[case]), 2) for case in experiment_cases],
+		"Mean Latency (ms)": [round(np.mean(avg_latency_dict[case]) / 1000000, 2) for case in experiment_cases],
+		"P99 Latency (ms)": [round(np.mean(p99_latency_dict[case]) / 1000000, 2) for case in experiment_cases],
+	}
+	output_df = pd.DataFrame(output_dict, index=experiment_cases)
+	output_df.to_markdown(buf=sys.stdout)
+	print("")

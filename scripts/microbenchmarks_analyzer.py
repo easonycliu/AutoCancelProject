@@ -194,20 +194,19 @@ def show_sensitivity_result(
 	avg_throughput_dict, avg_latency_dict, p99_latency_dict, cancel_time_dict,
 	recover_time_dict
 ):
-	for mode in avg_throughput_dict.keys():
-		exp_settings = avg_throughput_dict[mode].keys()
-		for exp_setting in exp_settings:
-			print(
-				"Mode: {}, Settings: {}, Avg Throughput: {}, Avg Latency: {}, P99 Latency: {}, Cancel time: {}, Recover time: {}"
-				.format(
-					mode, exp_setting,
-					np.mean(avg_throughput_dict[mode][exp_setting]),
-					np.mean(avg_latency_dict[mode][exp_setting]),
-					np.mean(p99_latency_dict[mode][exp_setting]),
-					np.mean(cancel_time_dict[mode][exp_setting]),
-					np.mean(recover_time_dict[mode][exp_setting])
-				)
-			)
+	experiment_modes = list(avg_throughput_dict.keys())
+	exp_settings = list(avg_throughput_dict[experiment_modes[0]].keys())
+	output_dict = {
+		"Settings": [exp_setting for mode in experiment_modes for exp_setting in exp_settings],
+		"Throughput (QPS)": [round(np.mean(avg_throughput_dict[mode][exp_setting]), 2) for mode in experiment_modes for exp_setting in exp_settings],
+		"Mean Latency (ms)": [round(np.mean(avg_latency_dict[mode][exp_setting]) / 1000000, 2) for mode in experiment_modes for exp_setting in exp_settings],
+		"P99 Latency (ms)": [round(np.mean(p99_latency_dict[mode][exp_setting]) / 1000000, 2) for mode in experiment_modes for exp_setting in exp_settings],
+		"Cancel Time": [np.mean(cancel_time_dict[mode][exp_setting]) for mode in experiment_modes for exp_setting in exp_settings],
+		"Recover Time": [np.mean(recover_time_dict[mode][exp_setting]) for mode in experiment_modes for exp_setting in exp_settings]
+	}
+	output_df = pd.DataFrame(output_dict, index=[mode for mode in experiment_modes for exp_setting in exp_settings])
+	output_df.to_markdown(buf=sys.stdout)
+	print("")
 
 
 def analyze_overhead(log_dirs):
@@ -272,22 +271,16 @@ def analyze_overhead(log_dirs):
 
 
 def show_overhead_result(avg_throughput_dict, p99_latency_dict):
-	for metrics in avg_throughput_dict["true"].keys():
-		print(
-			"Enable: {}, Metrics: {}, Avg Throughput: {}, P99 Latency: {}".
-			format(
-				"true", metrics, avg_throughput_dict["true"][metrics],
-				p99_latency_dict["true"][metrics]
-			)
-		)
-		print(
-			"Enable: {}, Metrics: {}, Avg Throughput: {}, P99 Latency: {}".
-			format(
-				"false", metrics, avg_throughput_dict["false"][metrics],
-				p99_latency_dict["false"][metrics]
-			)
-		)
-		print("")
+	enable_list = ["true", "false"]
+	metrics_list = list(avg_throughput_dict[enable_list[0]].keys())
+	output_dict = {
+		"Enable": [enable for metrics in metrics_list for enable in enable_list],
+		"Throughput (QPS)": [avg_throughput_dict[enable][metrics] for metrics in metrics_list for enable in enable_list],
+		"P99 Latency (ms)": [p99_latency_dict[enable][metrics] for metrics in metrics_list for enable in enable_list]
+	}
+	output_df = pd.DataFrame(output_dict, index=[metrics for metrics in metrics_list for enable in enable_list])
+	output_df.to_markdown(buf=sys.stdout)
+	print("")
 
 
 if __name__ == "__main__":
