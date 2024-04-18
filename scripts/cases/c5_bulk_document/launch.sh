@@ -18,10 +18,6 @@ fi
 
 mkdir $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${CASE}_${START_TIME}
 
-if [ ! -f "$AUTOCANCEL_HOME/autocancel_exp/elasticsearch_exp/query/bulk_large_document.json" ]; then
-    docker run --rm --net=host -v $AUTOCANCEL_HOME/autocancel_exp/elasticsearch_exp:/root -w /root easonliu12138/es_py_env:v1.1 /root/performance_issues/large_document_write.py 800000000 bulk_large_document.json
-fi
-
 function run_once {
     env_args="USER_ID=$(id -u) GROUP_ID=$(id -g) DEFAULT_POLICY=$1 PREDICT_PROGRESS=$2 CANCEL_ENABLE=$3 AUTOCANCEL_LOG=$4"
 	bash -c "$env_args docker compose -f $AUTOCANCEL_HOME/scripts/cases/c5_bulk_document/docker_config.yml down"
