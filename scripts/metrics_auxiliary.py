@@ -30,9 +30,9 @@ def is_recovered(log_list, index):
 def get_cancel_time(log_list):
 	cancel_time = 0
 	for x in log_list:
-		if x[2] == "true":
+		if x[0] == 2 and x[2] == "true" and :
 			cancel_time += 1
-	return cancel_time
+	return cancel_time - 1
 
 
 def get_recover_time(log_list):
