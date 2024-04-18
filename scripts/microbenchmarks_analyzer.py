@@ -9,9 +9,6 @@ import matplotlib.pyplot as plt
 
 from metrics_auxiliary import get_cancel_time, get_recover_time, get_average_throughput, get_average_latency, get_p99_latency
 
-IGNORE_HEAD = 5
-IGNORE_TAIL = 1
-
 
 def get_log_dir_prefix(log_dir):
 	prefixes = [
@@ -119,8 +116,6 @@ def analyze_sensitivity(log_dirs):
 					# if row["Times"] == 1:
 					#     continue
 					lib_log_list.append(row.values)
-
-				lib_log_list = lib_log_list[IGNORE_HEAD:-IGNORE_TAIL]
 
 				avg_throughput_dict[mode][exp_setting] = get_average_throughput(
 					throughput_log_df.values.squeeze()

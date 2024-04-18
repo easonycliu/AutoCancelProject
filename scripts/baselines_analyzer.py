@@ -8,9 +8,6 @@ import matplotlib.pyplot as plt
 
 from metrics_auxiliary import get_average_throughput, get_average_latency, get_p99_latency, get_recover_time
 
-IGNORE_HEAD = 5
-IGNORE_TAIL = 1
-
 
 if __name__ == "__main__":
 	if len(sys.argv) < 2:

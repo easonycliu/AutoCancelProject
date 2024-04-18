@@ -8,9 +8,6 @@ import matplotlib.pyplot as plt
 
 from metrics_auxiliary import get_cancel_time, get_recover_time, get_average_throughput, get_average_latency, get_p99_latency, draw_throught
 
-IGNORE_HEAD = 5
-IGNORE_TAIL = 1
-
 
 if __name__ == "__main__":
 	if len(sys.argv) < 2:
@@ -61,8 +58,6 @@ if __name__ == "__main__":
 				# if row["Times"] == 1:
 				#     continue
 				lib_log_list.append(row.values)
-
-			lib_log_list = lib_log_list[IGNORE_HEAD:-IGNORE_TAIL]
 
 			avg_throughput_dict[mode].append(
 				get_average_throughput(throughput_log_df.values.squeeze())
