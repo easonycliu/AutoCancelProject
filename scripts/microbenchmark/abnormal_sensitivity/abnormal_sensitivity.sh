@@ -19,10 +19,6 @@ case_to_script_map["c7"]="solr_exp stat_fields 4.00 16 8 c7_stat_fields"
 
 sudo sysctl -w vm.max_map_count=262144
 
-if [ $(docker images | grep "solr_exp" | wc -l) -eq 0 ]; then
-    docker build --build-arg SOLR_ID=$(id -u) -t solr_exp:v1.0-9.0.0 .
-fi
-
 if [ ! -d "$AUTOCANCEL_HOME/scripts/logs/$START_DATE" ]; then
     mkdir $AUTOCANCEL_HOME/scripts/logs/$START_DATE
 fi

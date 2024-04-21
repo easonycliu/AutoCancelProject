@@ -13,10 +13,6 @@ test_times=1
 
 sudo sysctl -w vm.max_map_count=262144
 
-if [ $(docker images | grep "rally_exp" | wc -l) -eq 0 ]; then
-    docker build --build-arg UID=$(id -u) -t rally_exp:v1.0 .
-fi
-
 if [ ! -d "$AUTOCANCEL_HOME/scripts/data/rally" ]; then
     mkdir $AUTOCANCEL_HOME/scripts/data/rally
 	cp $AUTOCANCEL_HOME/scripts/data/elasticsearch/liblagent.so $AUTOCANCEL_HOME/scripts/data/rally
