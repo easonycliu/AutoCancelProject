@@ -12,10 +12,6 @@ client_num=8
 
 sudo sysctl -w vm.max_map_count=262144
 
-if [ $(docker images | grep "solr_exp" | wc -l) -eq 0 ]; then
-    docker build --build-arg SOLR_ID=$(id -u) -t solr_exp:v1.0-9.0.0 .
-fi
-
 if [ ! -d "$AUTOCANCEL_HOME/scripts/logs/$START_DATE" ]; then
     mkdir $AUTOCANCEL_HOME/scripts/logs/$START_DATE
 fi
