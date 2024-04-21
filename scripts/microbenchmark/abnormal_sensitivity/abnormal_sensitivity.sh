@@ -29,10 +29,6 @@ fi
 
 mkdir $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${MICROBENCHMARK}_${START_TIME}
 
-if [ ! -f "$AUTOCANCEL_HOME/autocancel_exp/elasticsearch_exp/query/boolean_search.json" ]; then
-    docker run --rm --net=host -v $AUTOCANCEL_HOME/autocancel_exp/elasticsearch_exp:/root -w /root easonliu12138/es_py_env:v1.1 /root/performance_issues/complex_boolean_operations.py 2000 boolean_search.json
-fi
-
 function run_once {
     local app_exp=$(echo ${case_to_script_map["$5"]} | awk '{print $1}')
     local case_name=$(echo ${case_to_script_map["$5"]} | awk '{print $2}')
