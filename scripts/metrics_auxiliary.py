@@ -40,11 +40,10 @@ def get_cancel_time(log_list):
 
 
 def get_recover_time(log_list):
-	log_list_stripped = log_list[IGNORE_HEAD:-IGNORE_TAIL]
 	recover_time = 0
 	recover_time_stabilizer = RecoverTimeStabilizer(1)
 	recover_list = [
-		recover_time_stabilizer.get(__is_recovered(log_list_stripped, index)) for index in range(len(log_list_stripped))
+		recover_time_stabilizer.get(__is_recovered(log_list, index)) for index in range(len(log_list))
 	]
 	for recovered in recover_list:
 		if not recovered:
