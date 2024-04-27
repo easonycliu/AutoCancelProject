@@ -33,7 +33,7 @@ function run_once {
     local client_num=$(echo ${case_to_script_map["$5"]} | awk '{print $5}')
     local case_dir=$(echo ${case_to_script_map["$5"]} | awk '{print $6}')
 
-	local env_args="USER_ID=$(id -u) GROUP_ID=$(id -g) DEFAULT_POLICY=$1 PREDICT_PROGRESS=$2 CANCEL_ENABLE=$3 AUTOCANCEL_LOG=$4 ABNORMAL_PORTION=$6 ABNORMAL_ABSOLUTE=$7 CORE_NUM=$core_num HEAP_SIZE=$heap_size CASE_DIR=$case_dir"
+	local env_args="USER_ID=$(id -u) GROUP_ID=$(id -g) DEFAULT_POLICY=$1 PREDICT_PROGRESS=$2 CANCEL_ENABLE=$3 AUTOCANCEL_LOG=$4 ABNORMAL_PORTION=$6 CORE_NUM=$core_num HEAP_SIZE=$heap_size CASE_DIR=$case_dir"
 
 	bash -c "$env_args docker compose -f $AUTOCANCEL_HOME/scripts/microbenchmark/abnormal_sensitivity/${app_exp}_docker_config.yml down"
 
@@ -57,33 +57,33 @@ function run_once {
 }
 
 function run_case {
-    run_once base_policy false true base_wo_predict $1 $2 $3
+    run_once base_policy false true base_wo_predict $1 $2
     sleep 10
 
-    run_once base_policy true true base_w_predict $1 $2 $3
+    run_once base_policy true true base_w_predict $1 $2
     sleep 10
 
-    run_once multi_objective_policy false true moo_wo_predict $1 $2 $3
+    run_once multi_objective_policy false true moo_wo_predict $1 $2
     sleep 10
 
-    run_once multi_objective_policy true true moo_w_predict $1 $2 $3
+    run_once multi_objective_policy true true moo_w_predict $1 $2
     sleep 10
 
-    run_once multi_objective_policy true false wo_cancel $1 $2 $3
+    run_once multi_objective_policy true false wo_cancel $1 $2
     sleep 10
 
-    run_once multi_objective_policy true false normal $1 $2 $3
+    run_once multi_objective_policy true false normal $1 $2
     sleep 10
 }
 
 function run_round {
-    run_case $1 0.1 80
+    run_case $1 0.1
     sleep 10
-    run_case $1 0.25 200
+    run_case $1 0.25
     sleep 10
-    run_case $1 0.5 400
+    run_case $1 0.5
     sleep 10
-    run_case $1 0.75 600
+    run_case $1 0.75
     sleep 10
 }
 
