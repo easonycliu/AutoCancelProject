@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 RECOVER_PERFORMANCE_DROP_PORTION = 0.3
-RECOVER_PERFORMANCE_DROP_ABSOLUTE = 500
+RECOVER_PERFORMANCE_DROP_ABSOLUTE = 250
 
 IGNORE_HEAD = 12
 IGNORE_TAIL = 2
@@ -31,12 +31,24 @@ def __is_recovered(log_list, index):
 	return (np.mean(heapq.nlargest(8, log_list)) * (1 - RECOVER_PERFORMANCE_DROP_PORTION)) < log_list[index] and (np.mean(heapq.nlargest(8, log_list)) - RECOVER_PERFORMANCE_DROP_ABSOLUTE) < log_list[index];
 
 def get_cancel_time(log_list):
-	log_list_stripped = log_list[IGNORE_HEAD:-IGNORE_TAIL]
 	cancel_time = 0
-	for x in log_list_stripped:
-		if x[0] == 2 and x[2] == "true":
-			cancel_time += 1
-	return cancel_time - 1
+	log_info = {}
+	for x in log_list:
+		if x[0] not in log_info.keys():
+			log_info[x[0]] = {"throughput": [], "cancel": 0}
+		log_info[x[0]]["throughput"].append(x[1])
+		if x[2] == "true":
+			log_info[x[0]]["cancel"] += 1
+
+	cancel_time = 0
+	for key in log_info.keys():
+		if key == 1:
+			if 2 in log_info.keys() and np.mean(log_info[2]["throughput"]) > 10:
+				continue
+		if np.mean(log_info[key]["throughput"]) < 10:
+			continue
+		cancel_time += log_info[key]["cancel"]
+	return cancel_time - 1 if cancel_time > 0 else cancel_time
 
 
 def get_recover_time(log_list):
