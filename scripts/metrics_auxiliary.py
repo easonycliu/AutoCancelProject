@@ -34,21 +34,9 @@ def get_cancel_time(log_list):
 	cancel_time = 0
 	log_info = {}
 	for x in log_list:
-		if x[0] not in log_info.keys():
-			log_info[x[0]] = {"throughput": [], "cancel": 0}
-		log_info[x[0]]["throughput"].append(x[1])
 		if x[2] == "true":
-			log_info[x[0]]["cancel"] += 1
-
-	cancel_time = 0
-	for key in log_info.keys():
-		if key == 1:
-			if 2 in log_info.keys() and np.mean(log_info[2]["throughput"]) > 10:
-				continue
-		if np.mean(log_info[key]["throughput"]) < 10:
-			continue
-		cancel_time += log_info[key]["cancel"]
-	return cancel_time - 1 if cancel_time > 0 else cancel_time
+			cancel_time += 1
+	return cancel_time
 
 
 def get_recover_time(log_list):

@@ -28,9 +28,14 @@ function run_once {
 	bash -c "$env_args docker compose -f $AUTOCANCEL_HOME/scripts/cases/c6_complex_request/docker_config.yml up &"
     sleep 60
 
+	rm -f $AUTOCANCEL_HOME/autocancel_exp/solr_exp/autocancel_lib_log
+	ln $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${CASE}_${START_TIME}/${4}.csv $AUTOCANCEL_HOME/autocancel_exp/solr_exp/autocancel_lib_log
     docker run --rm --net=host -v $AUTOCANCEL_HOME/autocancel_exp/solr_exp:/root -w /root easonliu12138/es_py_env:v1.1 /root/scripts/complex_boolean_script.sh $5 ${4}_${START_TIME} $4
     sleep 10
 
+	rm -f $AUTOCANCEL_HOME/autocancel_exp/solr_exp/autocancel_lib_log
+	rm -f $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${CASE}_${START_TIME}/${4}.csv
+    mv $AUTOCANCEL_HOME/autocancel_exp/solr_exp/autocancel_lib_log_strip $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${CASE}_${START_TIME}/${4}.csv
     mv $AUTOCANCEL_HOME/autocancel_exp/solr_exp/${4}_${START_TIME}_latency $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${CASE}_${START_TIME}/${4}_latency.csv
     mv $AUTOCANCEL_HOME/autocancel_exp/solr_exp/${4}_${START_TIME}_throughput $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${CASE}_${START_TIME}/${4}_throughput.csv
 
