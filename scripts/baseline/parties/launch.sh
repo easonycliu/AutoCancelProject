@@ -68,9 +68,11 @@ function run_once {
 	./parties.py $AUTOCANCEL_HOME/scripts/baseline/parties/config.txt `nproc` 10000 > /dev/null &
 	# Finish launch PARTIES
 	
+	ln $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${BASELINE}_${START_TIME}/${4}.csv $AUTOCANCEL_HOME/autocancel_exp/$app_exp/autocancel_lib_log
 	docker run --rm --net=host -v $AUTOCANCEL_HOME/autocancel_exp/$app_exp:/root -w /root easonliu12138/es_py_env:v1.1 /root/scripts/$case_name.sh \
 		$client_num ${BASELINE}_${START_TIME} $BASELINE $BASELINE:$(echo ${cgroup_names[@]} | tr " " ":")
 	sleep 10
+	rm -f $AUTOCANCEL_HOME/autocancel_exp/$app_exp/autocancel_lib_log
 	
 	kill -2 $(ps | grep parties.py | awk '{print $1}')
 	
