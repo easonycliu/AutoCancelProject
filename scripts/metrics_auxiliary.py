@@ -3,8 +3,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-RECOVER_PERFORMANCE_DROP_PORTION = 0.3
-RECOVER_PERFORMANCE_DROP_ABSOLUTE = 250
+RECOVER_PERFORMANCE_DROP_PORTION = 0.2
 
 IGNORE_HEAD = 12
 IGNORE_TAIL = 2
@@ -28,7 +27,7 @@ class RecoverTimeStabilizer:
 
 
 def __is_recovered(log_list, index):
-	return (np.mean(heapq.nlargest(8, log_list)) * (1 - RECOVER_PERFORMANCE_DROP_PORTION)) < log_list[index] and (np.mean(heapq.nlargest(8, log_list)) - RECOVER_PERFORMANCE_DROP_ABSOLUTE) < log_list[index];
+	return (np.mean(heapq.nlargest(8, log_list)) * (1 - RECOVER_PERFORMANCE_DROP_PORTION)) < log_list[index];
 
 def get_cancel_time(log_list):
 	cancel_time = 0
