@@ -85,11 +85,11 @@ function run_case {
 function run_round {
     run_case $1 0.1
     sleep 10
-    run_case $1 0.25
+    run_case $1 0.2
     sleep 10
-    run_case $1 0.5
+    run_case $1 0.4
     sleep 10
-    run_case $1 0.75
+    run_case $1 0.6
     sleep 10
 }
 
