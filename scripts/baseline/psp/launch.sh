@@ -65,6 +65,6 @@ function run_once {
 }
 
 if [[ "$1" =~ ^c[1-7]$ ]]; then
-	run_round $1
+	run_once $1
 fi
 
