@@ -57,9 +57,7 @@ function run_once {
 	bash -c "$env_args docker compose -f $AUTOCANCEL_HOME/scripts/baseline/psandbox/${app_exp}_docker_config.yml down"
 }
 
-run_once c1
-run_once c3
-run_once c4
-run_once c5
-run_once c6
-run_once c7
+if [[ "$1" =~ ^c[1-7]$ ]]; then
+	run_round $1
+fi
+
