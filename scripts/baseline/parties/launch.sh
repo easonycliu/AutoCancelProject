@@ -68,11 +68,16 @@ function run_once {
 	./parties.py $AUTOCANCEL_HOME/scripts/baseline/parties/config.txt `nproc` 10000 > /dev/null &
 	# Finish launch PARTIES
 	
-	ln $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${BASELINE}_${START_TIME}/${4}.csv $AUTOCANCEL_HOME/autocancel_exp/$app_exp/autocancel_lib_log
+	rm -f $AUTOCANCEL_HOME/autocancel_exp/$app_exp/autocancel_lib_log
+	ln $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${BASELINE}_${START_TIME}/${BASELINE}.csv $AUTOCANCEL_HOME/autocancel_exp/$app_exp/autocancel_lib_log
+
 	docker run --rm --net=host -v $AUTOCANCEL_HOME/autocancel_exp/$app_exp:/root -w /root easonliu12138/es_py_env:v1.1 /root/scripts/$case_name.sh \
 		$client_num ${BASELINE}_${START_TIME} $BASELINE $BASELINE:$(echo ${cgroup_names[@]} | tr " " ":")
 	sleep 10
+
 	rm -f $AUTOCANCEL_HOME/autocancel_exp/$app_exp/autocancel_lib_log
+	rm -f $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${MICROBENCHMARK}_${START_TIME}/${BASELINE}.csv
+    mv $AUTOCANCEL_HOME/autocancel_exp/$app_exp/autocancel_lib_log_strip $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${MICROBENCHMARK}_${START_TIME}/${BASELINE}_${1}.csv
 	
 	kill -2 $(ps | grep parties.py | awk '{print $1}')
 	
