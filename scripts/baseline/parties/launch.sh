@@ -76,8 +76,8 @@ function run_once {
 	sleep 10
 
 	rm -f $AUTOCANCEL_HOME/autocancel_exp/$app_exp/autocancel_lib_log
-	rm -f $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${MICROBENCHMARK}_${START_TIME}/${BASELINE}.csv
-    mv $AUTOCANCEL_HOME/autocancel_exp/$app_exp/autocancel_lib_log_strip $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${MICROBENCHMARK}_${START_TIME}/${BASELINE}_${1}.csv
+	rm -f $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${BASELINE}_${START_TIME}/${BASELINE}.csv
+    mv $AUTOCANCEL_HOME/autocancel_exp/$app_exp/autocancel_lib_log_strip $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${BASELINE}_${START_TIME}/${BASELINE}_${1}.csv
 	
 	kill -2 $(ps | grep parties.py | awk '{print $1}')
 	
