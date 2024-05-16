@@ -14,7 +14,7 @@ case_to_script_map["c1"]="elasticsearch_exp multiclient_request_cache_evict 8.00
 case_to_script_map["c3"]="elasticsearch_exp multiclient_nested_aggs 12.00 16 8 c3_nest_agg"
 case_to_script_map["c4"]="elasticsearch_exp multiclient_complex_boolean 12.00 16 5 c4_complex_boolean"
 case_to_script_map["c5"]="elasticsearch_exp multiclient_bulk_large_document 8.00 16 5 c5_bulk_document"
-case_to_script_map["c6"]="solr_exp complex_boolean_script 1.00 16 2 c6_complex_request"
+case_to_script_map["c6"]="solr_exp complex_boolean_script 1.50 16 2 c6_complex_request"
 case_to_script_map["c7"]="solr_exp stat_fields 4.00 16 8 c7_stat_fields"
 
 sudo sysctl -w vm.max_map_count=262144
