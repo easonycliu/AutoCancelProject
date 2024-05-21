@@ -44,7 +44,7 @@ function run_once {
 			esrally race --track=random_vector --pipeline=benchmark-only --target-hosts=127.0.0.1:9200 --report-file=/home/rally/.rally/report-${5}-${BENCHMARK_START_TIME}.csv --report-format=csv
 					--track-params="index_clients:$6,index_iterations:100,index_bulk_size:100,search_iterations:100,search_clients:$7"
 
-        cp $AUTOCANCEL_HOME/scripts/data/rally_home/report-${5}-${BENCHMARK_START_TIME}.csv $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${MICROBENCHMARK}_${START_TIME}
+        cp $AUTOCANCEL_HOME/scripts/data/rally_home/report-${5}-${BENCHMARK_START_TIME}.csv $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${MICROBENCHMARK}_${START_TIME}/report-${5}-${BENCHMARK_START_TIME}-index-${6}-search-${7}.csv
 
         sleep 10
     done
