@@ -31,6 +31,14 @@ function run_once {
 		docker compose -f $AUTOCANCEL_HOME/scripts/microbenchmark/solr_bench/docker_config.yml up &
     sleep 90
 
+	tmp=$(mktemp)
+	jq '."task-types".indexing."index-benchmark"."min-threads" = '$6'' $AUTOCANCEL_HOME/scripts/data/solr_bench_home/stress-facets-local-autocancel-base.json | \
+		jq '."task-types".indexing."index-benchmark"."max-threads" = '$6'' | \
+		jq '."task-types".querying."query-benchmark"."min-threads" = '$7'' | \
+		jq '."task-types".querying."query-benchmark"."max-threads" = '$7''
+
+	mv $tmp $AUTOCANCEL_START/solr-bench/suites/stress-facets-local-autocancel.json
+
     for j in $(seq 1 1 $test_times); do
         BENCHMARK_START_TIME=$(date +%Y_%m_%d_%H_%M_%S)
 		docker run --rm --net=host -e START_TIME=$START_TIME -v $AUTOCANCEL_HOME/scripts/data/solr_bench_home:/solr-bench/suites easonliu12138/solr_bench_exp:v1.2
@@ -43,14 +51,10 @@ function run_once {
 		docker compose -f $AUTOCANCEL_HOME/scripts/microbenchmark/solr_bench/docker_config.yml down
 }
 
-run_once multi_objective_policy true false normal true
-sleep 10
-run_once multi_objective_policy true false normal false
-sleep 10
+for client_num in ${client_num_list[*]}; do
+    run_once multi_objective_policy true false normal true $client_num $client_num
+    sleep 10
+    run_once multi_objective_policy true false normal false $client_num $client_num
+    sleep 10
+done
 
-# for client_num in ${client_num_list[*]}; do
-#     run_once multi_objective_policy true false normal true $client_num
-#     sleep 10
-#     run_once multi_objective_policy true false normal false $client_num
-#     sleep 10
-# done
