@@ -37,7 +37,7 @@ function run_once {
 		jq '."task-types".querying."query-benchmark"."min-threads" = '$7'' | \
 		jq '."task-types".querying."query-benchmark"."max-threads" = '$7'' > $tmp
 
-	mv $tmp $AUTOCANCEL_HOME/solr-bench/suites/stress-facets-local-autocancel.json
+	mv $tmp $AUTOCANCEL_HOME/scripts/data/solr_bench_home/stress-facets-local-autocancel.json
 
     for j in $(seq 1 1 $test_times); do
         BENCHMARK_START_TIME=$(date +%Y_%m_%d_%H_%M_%S)
