@@ -52,10 +52,9 @@ function run_once {
     USER_ID=$(id -u) GROUP_ID=$(id -g) DEFAULT_POLICY=$1 PREDICT_PROGRESS=$2 CANCEL_ENABLE=$3 AUTOCANCEL_LOG=$4 AUTOCANCEL_START=$5 docker compose -f $AUTOCANCEL_HOME/scripts/microbenchmark/rally_benchmark/docker_config.yml down
 }
 
-
-for client_num in ${client_num_list[*]}; do
-	run_once multi_objective_policy true false normal true $client_num $client_num
+if [[ "$1" =~ ^[0-9]+$ ]]; then
+	run_once multi_objective_policy true false normal true $1 $1
 	sleep 10
-	run_once multi_objective_policy true false normal false $client_num $client_num
+	run_once multi_objective_policy true false normal false $1 $1
 	sleep 10
-done
+fi
