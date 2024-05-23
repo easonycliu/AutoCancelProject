@@ -155,8 +155,8 @@ def show_sensitivity_result(
 
 
 def analyze_overhead(log_dirs):
-	avg_throughput_dict = {"true": {}, "false": {}}
-	p99_latency_dict = {"true": {}, "false": {}}
+	avg_throughput_dict = {}
+	p99_latency_dict = {}
 	for log_dir in log_dirs:
 		microbenchmark = get_log_dir_prefix(log_dir)
 		log_dir_wo_bench = remove_prefix(log_dir, "{}_".format(microbenchmark))
@@ -172,18 +172,23 @@ def analyze_overhead(log_dirs):
 				if '-' not in log_file:
 					continue
 				enable_autocancel = log_file.split('-')[1]
+				client_num = remove_suffix(log_file, ".csv").split('-')[-1]
+				if client_num not in avg_throughput_dict.keys():
+					avg_throughput_dict[client_num] = {"true": {}, "false": {}}
+				if client_num not in p99_latency_dict.keys():
+					p99_latency_dict[client_num] = {"true": {}, "false": {}}
 				benchmark_result_df = pd.read_csv(
 					os.path.join(log_dir_abs, log_file)
 				)
 				benchmark_result_list = benchmark_result_df.values.tolist()
 				for benchmark_result in benchmark_result_list:
 					if benchmark_result[0] == "99th percentile latency":
-						p99_latency_dict[enable_autocancel][
+						p99_latency_dict[client_num][enable_autocancel][
 							benchmark_result[1]] = "{} {}".format(
 								benchmark_result[2], benchmark_result[3]
 							)
 					if benchmark_result[0] == "Mean Throughput":
-						avg_throughput_dict[enable_autocancel][
+						avg_throughput_dict[client_num][enable_autocancel][
 							benchmark_result[1]] = "{} {}".format(
 								benchmark_result[2], benchmark_result[3]
 							)
@@ -193,12 +198,17 @@ def analyze_overhead(log_dirs):
 				if '_' not in log_file:
 					continue
 				enable_autocancel = log_file.split('_')[1]
+				client_num = remove_suffix(log_file, ".csv").split('-')[-2]
+				if client_num not in avg_throughput_dict.keys():
+					avg_throughput_dict[client_num] = {"true": {}, "false": {}}
+				if client_num not in p99_latency_dict.keys():
+					p99_latency_dict[client_num] = {"true": {}, "false": {}}
 				benchmark_result_file = open(
 					os.path.join(log_dir_abs, log_file)
 				)
 				benchmark_result_dict = json.load(benchmark_result_file)
 				benchmark_result_file.close()
-				p99_latency_dict[enable_autocancel]["Query"] = "{} ms".format(
+				p99_latency_dict[client_num][enable_autocancel]["Query"] = "{} ms".format(
 					benchmark_result_dict["task2"][0]["timings"][0]["99th"]
 				)
 				total_queries = int(
@@ -209,7 +219,7 @@ def analyze_overhead(log_dirs):
 					benchmark_result_dict["task2"][0]["timings"][0]
 					["total-time"]
 				) / 1000
-				avg_throughput_dict[enable_autocancel][
+				avg_throughput_dict[client_num][enable_autocancel][
 					"Query"] = "{} qps".format(total_queries / total_time)
 
 	return avg_throughput_dict, p99_latency_dict
@@ -217,11 +227,12 @@ def analyze_overhead(log_dirs):
 
 def show_overhead_result(avg_throughput_dict, p99_latency_dict):
 	enable_list = ["true", "false"]
-	metrics_list = list(avg_throughput_dict[enable_list[0]].keys())
+	client_num_list = list(avg_throughput_dict.keys())
+	metrics_list = list(avg_throughput_dict[client_num_list[0]][enable_list[0]].keys())
 	output_dict = {
 		"Enable": [enable for metrics in metrics_list for enable in enable_list],
-		"Throughput (QPS)": [avg_throughput_dict[enable][metrics] for metrics in metrics_list for enable in enable_list],
-		"P99 Latency (ms)": [p99_latency_dict[enable][metrics] for metrics in metrics_list for enable in enable_list]
+		"Throughput (QPS)": [avg_throughput_dict[client_num][enable][metrics] for metrics in metrics_list for enable in enable_list for client_num in client_num_list],
+		"P99 Latency (ms)": [p99_latency_dict[client_num][enable][metrics] for metrics in metrics_list for enable in enable_list for client_num in client_num_list]
 	}
 	output_df = pd.DataFrame(output_dict, index=[metrics for metrics in metrics_list for enable in enable_list])
 	output_df.to_markdown(buf=sys.stdout)
