@@ -41,7 +41,7 @@ function run_once {
 
     for j in $(seq 1 1 $test_times); do
         BENCHMARK_START_TIME=$(date +%Y_%m_%d_%H_%M_%S)
-		docker run --rm --net=host -e START_TIME=$START_TIME -v $AUTOCANCEL_HOME/scripts/data/solr_bench_home:/solr-bench/suites easonliu12138/solr_bench_exp:v1.2
+		docker run --rm --net=host -e START_TIME=$START_TIME -v $AUTOCANCEL_HOME/scripts/data/solr_bench_home:/solr-bench/suites easonliu12138/solr_bench_exp:v1.3
 		mv $AUTOCANCEL_HOME/scripts/data/solr_bench_home/results-$START_TIME.json $AUTOCANCEL_HOME/scripts/logs/$START_DATE/${MICROBENCHMARK}_${START_TIME}/enable_${5}_index_${6}_search_${7}_test_${j}_result.json
 
         sleep 10
@@ -51,10 +51,10 @@ function run_once {
 		docker compose -f $AUTOCANCEL_HOME/scripts/microbenchmark/solr_bench/docker_config.yml down
 }
 
-for client_num in ${client_num_list[*]}; do
-    run_once multi_objective_policy true false normal true $client_num $client_num
-    sleep 10
-    run_once multi_objective_policy true false normal false $client_num $client_num
-    sleep 10
-done
+if [[ "$1" =~ ^[0-9]+$ ]]; then
+	run_once multi_objective_policy true false normal true $1 $1
+	sleep 10
+	run_once multi_objective_policy true false normal false $1 $1
+	sleep 10
+fi
 
