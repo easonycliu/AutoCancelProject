@@ -198,7 +198,7 @@ def analyze_overhead(log_dirs):
 				if '_' not in log_file:
 					continue
 				enable_autocancel = log_file.split('_')[1]
-				client_num = remove_suffix(log_file, ".csv").split('-')[-2]
+				client_num = remove_suffix(log_file, ".json").split('_')[-2]
 				if client_num not in avg_throughput_dict.keys():
 					avg_throughput_dict[client_num] = {"true": {}, "false": {}}
 				if client_num not in p99_latency_dict.keys():
@@ -219,8 +219,20 @@ def analyze_overhead(log_dirs):
 					benchmark_result_dict["task2"][0]["timings"][0]
 					["total-time"]
 				) / 1000
-				avg_throughput_dict[client_num][enable_autocancel][
-					"Query"] = "{} qps".format(total_queries / total_time)
+				avg_throughput_dict[client_num][enable_autocancel]["Query"] = "{} qps".format(total_queries / total_time)
+
+				p99_latency_dict[client_num][enable_autocancel]["Index"] = "{} ms".format(
+					benchmark_result_dict["task1"][0]["timings"]["cloud"][0]["99th"]
+				)
+				total_queries = int(
+					benchmark_result_dict["task1"][0]["timings"]["cloud"][0]
+					["total-queries"]
+				)
+				total_time = int(
+					benchmark_result_dict["task1"][0]["timings"]["cloud"][0]
+					["total-time"]
+				) / 1000
+				avg_throughput_dict[client_num][enable_autocancel]["Index"] = "{} qps".format(total_queries / total_time)
 
 	return avg_throughput_dict, p99_latency_dict
 
