@@ -8,17 +8,12 @@ import matplotlib.pyplot as plt
 
 from metrics_auxiliary import get_cancel_time, get_recover_time, get_average_throughput, get_average_latency, get_p99_latency, draw_throught
 
+experiment_modes = [
+	"base_wo_predict", "base_w_predict", "moo_wo_predict", "moo_w_predict",
+	"wo_cancel", "normal"
+]
 
-if __name__ == "__main__":
-	if len(sys.argv) < 2:
-		print("Usage: ./log_analyzer.py LOG_DIR1,LOG_DIR2,...")
-
-	experiment_modes = [
-		"base_wo_predict", "base_w_predict", "moo_wo_predict", "moo_w_predict",
-		"wo_cancel", "normal"
-	]
-
-	log_dirs = sys.argv[1].split(',')
+def analyze_case(log_dirs):
 	avg_throughput_dict = {mode: [] for mode in experiment_modes}
 	avg_latency_dict = {mode: [] for mode in experiment_modes}
 	p99_latency_dict = {mode: [] for mode in experiment_modes}
@@ -80,6 +75,9 @@ if __name__ == "__main__":
 				)
 			)
 
+	return avg_throughput_dict, avg_latency_dict, p99_latency_dict, cancel_time_dict, recover_time_dict
+
+def show_case_result(avg_throughput_dict, avg_latency_dict, p99_latency_dict, cancel_time_dict, recover_time_dict):
 	output_dict = {
 		"Throughput (QPS)": [round(np.mean(avg_throughput_dict[mode]), 2) for mode in experiment_modes],
 		"Mean Latency (ms)": [round(np.mean(avg_latency_dict[mode]) / 1000000, 2) for mode in experiment_modes],
@@ -90,3 +88,12 @@ if __name__ == "__main__":
 	output_df = pd.DataFrame(output_dict, index=experiment_modes)
 	output_df.to_markdown(buf=sys.stdout)
 	print("")
+
+if __name__ == "__main__":
+	if len(sys.argv) < 2:
+		print("Usage: ./log_analyzer.py LOG_DIR1,LOG_DIR2,...")
+
+	log_dirs = sys.argv[1].split(',')
+	avg_throughput_dict, avg_latency_dict, p99_latency_dict, cancel_time_dict, recover_time_dict = analyze_case(log_dirs)
+	show_case_result(avg_throughput_dict, avg_latency_dict, p99_latency_dict, cancel_time_dict, recover_time_dict)
+
