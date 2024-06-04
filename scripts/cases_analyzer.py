@@ -6,7 +6,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-from metrics_auxiliary import get_cancel_time, get_recover_time, get_average_throughput, get_average_latency, get_p99_latency, draw_throught
+from metrics_auxiliary import get_cancel_time, get_recover_time, get_average_throughput, get_average_latency, get_p99_latency, draw_throught, get_average_wo_abnormal
 
 experiment_modes = [
 	"base_wo_predict", "base_w_predict", "moo_wo_predict", "moo_w_predict",
@@ -79,11 +79,11 @@ def analyze_case(log_dirs):
 
 def show_case_result(avg_throughput_dict, avg_latency_dict, p99_latency_dict, cancel_time_dict, recover_time_dict):
 	output_dict = {
-		"Throughput (QPS)": [round(np.mean(avg_throughput_dict[mode]), 2) for mode in experiment_modes],
-		"Mean Latency (ms)": [round(np.mean(avg_latency_dict[mode]) / 1000000, 2) for mode in experiment_modes],
-		"P99 Latency (ms)": [round(np.mean(p99_latency_dict[mode]) / 1000000, 2) for mode in experiment_modes],
-		"Cancel Time": [np.mean(cancel_time_dict[mode]) for mode in experiment_modes],
-		"Recover Time": [np.mean(recover_time_dict[mode]) for mode in experiment_modes]
+		"Throughput (QPS)": [round(get_average_wo_abnormal(avg_throughput_dict[mode], 1), 2) for mode in experiment_modes],
+		"Mean Latency (ms)": [round(get_average_wo_abnormal(avg_latency_dict[mode], 1) / 1000000, 2) for mode in experiment_modes],
+		"P99 Latency (ms)": [round(get_average_wo_abnormal(p99_latency_dict[mode], 1) / 1000000, 2) for mode in experiment_modes],
+		"Cancel Time": [round(get_average_wo_abnormal(cancel_time_dict[mode], 1), 2) for mode in experiment_modes],
+		"Recover Time": [round(get_average_wo_abnormal(recover_time_dict[mode], 1), 2) for mode in experiment_modes]
 	}
 	output_df = pd.DataFrame(output_dict, index=experiment_modes)
 	output_df.to_markdown(buf=sys.stdout)

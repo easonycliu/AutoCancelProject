@@ -71,4 +71,14 @@ def draw_throught(log_list, fig_path):
 	plt.plot([x for x in range(len(log_list_stripped))], [x[1] for x in log_list_stripped])
 	plt.savefig(fig_path)
 
+def get_average_wo_abnormal(data, abnormal_num):
+	average = np.mean(data)
+	sorted_data = np.sort(data)
+	for _ in range(abnormal_num):
+		if np.abs(average - sorted_data[0]) > np.abs(average - sorted_data[-1]):
+			sorted_data = sorted_data[1:]
+		else:
+			sorted_data = sorted_data[:-1]
+		average = np.mean(sorted_data)
+	return average
 
