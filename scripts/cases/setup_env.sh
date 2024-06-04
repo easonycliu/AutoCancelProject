@@ -14,7 +14,7 @@ if [ "$(dpkg -l | grep " gh ")" == "" ]; then
 	sudo apt install gh -y
 fi
 
-if [ "$(dpkg -l | grep " gh ")" == "" ]; then
+if [ "$(dpkg -l | grep " jq ")" == "" ]; then
 	sudo apt install jq -y
 fi
 
