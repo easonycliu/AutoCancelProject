@@ -6,6 +6,9 @@
 
 /scripts/data/*
 !/scripts/data/.gitkeep
+!/scripts/data/rally_home
+/scripts/data/rally_home/*
+!/scripts/data/rally_home/rally.ini
 /scripts/logs/*
 !/scripts/logs/.gitkeep
 
