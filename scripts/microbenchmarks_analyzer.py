@@ -87,6 +87,12 @@ def analyze_sensitivity(log_dirs):
 			exp_settings = get_exp_settings(log_files_with_mode, mode)
 
 			for exp_setting in exp_settings:
+				avg_throughput_dict[mode].setdefault(exp_setting, [])
+				avg_latency_dict[mode].setdefault(exp_setting, [])
+				p99_latency_dict[mode].setdefault(exp_setting, [])
+				cancel_time_dict[mode].setdefault(exp_setting, [])
+				recover_time_dict[mode].setdefault(exp_setting, [])
+
 				lib_log_df = pd.read_csv(
 					os.path.join(
 						log_dir_abs,
@@ -117,20 +123,20 @@ def analyze_sensitivity(log_dirs):
 					#     continue
 					lib_log_list.append(row.values)
 
-				avg_throughput_dict[mode][exp_setting] = get_average_throughput(
-					throughput_log_df.values.squeeze()
+				avg_throughput_dict[mode][exp_setting].append(
+					get_average_throughput(throughput_log_df.values.squeeze())
 				)
-				avg_latency_dict[mode][exp_setting] = get_average_latency(
-					latency_log_df.values.squeeze()
+				avg_latency_dict[mode][exp_setting].append(
+					get_average_latency(latency_log_df.values.squeeze())
 				)
-				p99_latency_dict[mode][exp_setting] = get_p99_latency(
-					latency_log_df.values.squeeze()
+				p99_latency_dict[mode][exp_setting].append(
+					get_p99_latency(latency_log_df.values.squeeze())
 				)
-				cancel_time_dict[mode][
-					exp_setting
-				] = 0 if mode == "wo_cancel" else get_cancel_time(lib_log_list)
-				recover_time_dict[mode][exp_setting] = get_recover_time(
-					throughput_log_df.values.squeeze()
+				cancel_time_dict[mode][exp_setting].append(
+					0 if mode == "wo_cancel" else get_cancel_time(lib_log_list)
+				)
+				recover_time_dict[mode][exp_setting].append(
+					get_recover_time(throughput_log_df.values.squeeze())
 				)
 	return avg_throughput_dict, avg_latency_dict, p99_latency_dict, cancel_time_dict, recover_time_dict
 
