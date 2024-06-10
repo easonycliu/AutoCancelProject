@@ -7,6 +7,7 @@ import numpy as np
 
 from cases_analyzer import analyze_case, show_case_result
 from microbenchmarks_analyzer import analyze_sensitivity, show_sensitivity_result, analyze_overhead, show_overhead_result
+from baselines_analyzer import analyze_baseline, show_baseline_result
 
 cases_names = ["c1", "c3", "c4", "c5", "c6", "c7"]
 microbenchmark_names = ["abnormal_sensitivity_c1", "abnormal_sensitivity_c3", "abnormal_sensitivity_c4", "abnormal_sensitivity_c6", "abnormal_sensitivity_c7"]
@@ -32,6 +33,21 @@ if __name__ == "__main__":
 		show_result_func = show_overhead_result
 	elif exp_name in baseline_names:
 		exp_type = "baseline"
+		def analyze_baselines(file_names_list):
+			avg_throughput_dict, avg_latency_dict, p99_latency_dict, cancel_time_dict, recover_time_dict = {}, {}, {}, {}, {}
+			for index, case in enumerate(file_names_list[0]):
+				avg_throughput_list, avg_latency_list, p99_latency_list, cancel_time_list, recover_time_list = analyze_baseline(
+					case, [log_dir[index] for log_dir in file_names_list[1:]]
+				)
+				avg_throughput_dict[case] = avg_throughput_list
+				avg_latency_dict[case] = avg_latency_list
+				p99_latency_dict[case] = p99_latency_list
+				cancel_time_dict[case] =cancel_time_list 
+				recover_time_dict[case] = recover_time_list
+			return avg_throughput_dict, avg_latency_dict, p99_latency_dict, cancel_time_dict, recover_time_dict
+
+		analyze_func = analyze_baselines
+		show_result_func = show_baseline_result
 	else:
 		print("Error arg")
 		print("\tChoices: {}".format(cases_names + microbenchmark_names + overhead_names + baseline_names))
