@@ -9,6 +9,11 @@ import matplotlib.pyplot as plt
 
 from metrics_auxiliary import get_cancel_time, get_recover_time, get_average_throughput, get_average_latency, get_p99_latency
 
+experiment_modes = [
+	"base_wo_predict", "base_w_predict", "moo_wo_predict", "moo_w_predict",
+	"wo_cancel", "normal"
+]
+
 
 def get_log_dir_prefix(log_dir):
 	prefixes = [
@@ -54,11 +59,6 @@ def get_exp_settings(log_files, mode):
 
 
 def analyze_sensitivity(log_dirs):
-	experiment_modes = [
-		"base_wo_predict", "base_w_predict", "moo_wo_predict", "moo_w_predict",
-		"wo_cancel", "normal"
-	]
-
 	avg_throughput_dict = {mode: {} for mode in experiment_modes}
 	avg_latency_dict = {mode: {} for mode in experiment_modes}
 	p99_latency_dict = {mode: {} for mode in experiment_modes}
@@ -139,7 +139,6 @@ def show_sensitivity_result(
 	avg_throughput_dict, avg_latency_dict, p99_latency_dict, cancel_time_dict,
 	recover_time_dict
 ):
-	experiment_modes = list(avg_throughput_dict.keys())
 	exp_settings = list(avg_throughput_dict[experiment_modes[0]].keys())
 	output_dict = {
 		"Settings": [exp_setting for mode in experiment_modes for exp_setting in exp_settings],
