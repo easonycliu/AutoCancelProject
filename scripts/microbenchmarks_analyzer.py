@@ -14,12 +14,17 @@ experiment_modes = [
 	"wo_cancel", "normal"
 ]
 
+prefixes = [
+	"abnormal_sensitivity", "interval_sensitivity", "rally_benchmark",
+	"solr_bench"
+]
+
+RALLY_BENCHMARK_METRICS = ["random-indexing", "knn-filtered-search-multiple-client"]
+
+SOLR_BENCH_SEARCH = ""
+SOLR_BENCH_INDEX = ""
 
 def get_log_dir_prefix(log_dir):
-	prefixes = [
-		"abnormal_sensitivity", "interval_sensitivity", "rally_benchmark",
-		"solr_bench"
-	]
 	for prefix in prefixes:
 		if log_dir.startswith(prefix):
 			return prefix
@@ -187,15 +192,17 @@ def analyze_overhead(log_dirs):
 				)
 				benchmark_result_list = benchmark_result_df.values.tolist()
 				for benchmark_result in benchmark_result_list:
-					if benchmark_result[0] == "99th percentile latency":
+					if benchmark_result[0] == "99th percentile latency" and benchmark_result[1] in RALLY_BENCHMARK_METRICS:
+						p99_latency_dict[client_num][enable_autocancel].setdefault(benchmark_result[1], [])
 						p99_latency_dict[client_num][enable_autocancel][
-							benchmark_result[1]] = "{} {}".format(
-								benchmark_result[2], benchmark_result[3]
+							benchmark_result[1]].append(
+								(benchmark_result[2], benchmark_result[3])
 							)
-					if benchmark_result[0] == "Mean Throughput":
+					if benchmark_result[0] == "Mean Throughput" and benchmark_result[1] in RALLY_BENCHMARK_METRICS:
+						avg_throughput_dict[client_num][enable_autocancel].setdefault(benchmark_result[1], [])
 						avg_throughput_dict[client_num][enable_autocancel][
-							benchmark_result[1]] = "{} {}".format(
-								benchmark_result[2], benchmark_result[3]
+							benchmark_result[1]].append(
+								(benchmark_result[2], benchmark_result[3])
 							)
 		elif microbenchmark == "solr_bench":
 			log_files = os.listdir(log_dir_abs)
@@ -239,17 +246,17 @@ def analyze_overhead(log_dirs):
 				) / 1000
 				avg_throughput_dict[client_num][enable_autocancel]["Index"] = "{} qps".format(total_queries / total_time)
 
-	return avg_throughput_dict, p99_latency_dict
+	return avg_throughput_dict, p99_latency_dict, None, None, None
 
 
-def show_overhead_result(avg_throughput_dict, p99_latency_dict):
+def show_overhead_result(avg_throughput_dict, p99_latency_dict, placeholder_0, placeholder_1, placeholder_2):
 	enable_list = ["true", "false"]
 	client_num_list = list(avg_throughput_dict.keys())
 	metrics_list = list(avg_throughput_dict[client_num_list[0]][enable_list[0]].keys())
 	output_dict = {
 		"Enable": [enable for metrics in metrics_list for enable in enable_list],
-		"Throughput (QPS)": [avg_throughput_dict[client_num][enable][metrics] for metrics in metrics_list for enable in enable_list for client_num in client_num_list],
-		"P99 Latency (ms)": [p99_latency_dict[client_num][enable][metrics] for metrics in metrics_list for enable in enable_list for client_num in client_num_list]
+		"Throughput (QPS)": [round(np.mean([x[0] for x in avg_throughput_dict[client_num][enable][metrics]]), 2) for metrics in metrics_list for enable in enable_list for client_num in client_num_list],
+		"P99 Latency (ms)": [round(np.mean([x[0] for x in p99_latency_dict[client_num][enable][metrics]]), 2) for metrics in metrics_list for enable in enable_list for client_num in client_num_list]
 	}
 	output_df = pd.DataFrame(output_dict, index=[metrics for metrics in metrics_list for enable in enable_list])
 	output_df.to_markdown(buf=sys.stdout)
