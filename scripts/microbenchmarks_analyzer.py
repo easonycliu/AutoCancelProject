@@ -205,18 +205,17 @@ def analyze_overhead(client_num, log_dirs):
 				if '_' not in log_file:
 					continue
 				enable_autocancel = log_file.split('_')[1]
-				client_num = remove_suffix(log_file, ".json").split('_')[-2]
-				if client_num not in avg_throughput_dict.keys():
-					avg_throughput_dict[client_num] = {"true": {}, "false": {}}
-				if client_num not in p99_latency_dict.keys():
-					p99_latency_dict[client_num] = {"true": {}, "false": {}}
+				avg_throughput_dict[enable_autocancel].setdefault("Query", [])
+				avg_throughput_dict[enable_autocancel].setdefault("Index", [])
+				p99_latency_dict[enable_autocancel].setdefault("Query", [])
+				p99_latency_dict[enable_autocancel].setdefault("Index", [])
 				benchmark_result_file = open(
 					os.path.join(log_dir_abs, log_file)
 				)
 				benchmark_result_dict = json.load(benchmark_result_file)
 				benchmark_result_file.close()
-				p99_latency_dict[client_num][enable_autocancel]["Query"] = "{} ms".format(
-					benchmark_result_dict["task2"][0]["timings"][0]["99th"]
+				p99_latency_dict[enable_autocancel]["Query"].append(
+					(benchmark_result_dict["task2"][0]["timings"][0]["99th"], "ms")
 				)
 				total_queries = int(
 					benchmark_result_dict["task2"][0]["timings"][0]
@@ -226,10 +225,12 @@ def analyze_overhead(client_num, log_dirs):
 					benchmark_result_dict["task2"][0]["timings"][0]
 					["total-time"]
 				) / 1000
-				avg_throughput_dict[client_num][enable_autocancel]["Query"] = "{} qps".format(total_queries / total_time)
+				avg_throughput_dict[enable_autocancel]["Query"].append(
+					(total_queries / total_time, "qps")
+				)
 
-				p99_latency_dict[client_num][enable_autocancel]["Index"] = "{} ms".format(
-					benchmark_result_dict["task1"][0]["timings"]["cloud"][0]["99th"]
+				p99_latency_dict[enable_autocancel]["Index"].append(
+					(benchmark_result_dict["task1"][0]["timings"]["cloud"][0]["99th"], "ms")
 				)
 				total_queries = int(
 					benchmark_result_dict["task1"][0]["timings"]["cloud"][0]
@@ -239,7 +240,9 @@ def analyze_overhead(client_num, log_dirs):
 					benchmark_result_dict["task1"][0]["timings"]["cloud"][0]
 					["total-time"]
 				) / 1000
-				avg_throughput_dict[client_num][enable_autocancel]["Index"] = "{} qps".format(total_queries / total_time)
+				avg_throughput_dict[enable_autocancel]["Index"].append(
+					(total_queries / total_time, "qps")
+				)
 
 	return avg_throughput_dict, p99_latency_dict, None, None, None
 
@@ -248,14 +251,13 @@ def show_overhead_result(avg_throughput_dict, p99_latency_dict, placeholder_0, p
 	enable_list = ["true", "false"]
 	client_num_list = list(avg_throughput_dict.keys())
 	metrics_list = list(avg_throughput_dict[client_num_list[0]][enable_list[0]].keys())
+	print(avg_throughput_dict)
 	output_dict = {
 		"Metrics": [metrics for client_num in client_num_list for metrics in metrics_list for enable in enable_list],
 		"Enable": [enable for client_num in client_num_list for metrics in metrics_list for enable in enable_list],
 		"Throughput (QPS)": [round(np.mean([x[0] for x in avg_throughput_dict[client_num][enable][metrics]]), 2) for client_num in client_num_list for metrics in metrics_list for enable in enable_list],
 		"P99 Latency (ms)": [round(np.mean([x[0] for x in p99_latency_dict[client_num][enable][metrics]]), 2) for client_num in client_num_list for metrics in metrics_list for enable in enable_list]
 	}
-	print([client_num for metrics in metrics_list for enable in enable_list for client_num in client_num_list])
-	print(output_dict)
 	output_df = pd.DataFrame(output_dict, index=[client_num for client_num in client_num_list for metrics in metrics_list for enable in enable_list])
 	output_df.to_markdown(buf=sys.stdout)
 	print("")
