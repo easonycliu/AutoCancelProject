@@ -29,7 +29,17 @@ if __name__ == "__main__":
 		show_result_func = show_sensitivity_result
 	elif exp_name in overhead_names:
 		exp_type = "microbenchmark"
-		analyze_func = analyze_overhead
+		def analyze_overheads(file_names_list):
+			avg_throughput_dict, avg_latency_dict = {}, {}
+			for index, client_num in enumerate(file_names_list[0]):
+				avg_throughput_list, avg_latency_list, placeholder_0, placeholder_1, placeholder_2 = analyze_overhead(
+					client_num, [log_dir[index] for log_dir in file_names_list[1:]]
+				)
+				avg_throughput_dict[client_num] = avg_throughput_list
+				avg_latency_dict[client_num] = avg_latency_list
+			return avg_throughput_dict, avg_latency_dict, None, None, None
+
+		analyze_func = analyze_overheads
 		show_result_func = show_overhead_result
 	elif exp_name in baseline_names:
 		exp_type = "baseline"

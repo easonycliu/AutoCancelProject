@@ -164,9 +164,9 @@ def show_sensitivity_result(
 	print("")
 
 
-def analyze_overhead(log_dirs):
-	avg_throughput_dict = {}
-	p99_latency_dict = {}
+def analyze_overhead(client_num, log_dirs):
+	avg_throughput_dict = {"true": {}, "false": {}}
+	p99_latency_dict = {"true": {}, "false": {}}
 	for log_dir in log_dirs:
 		microbenchmark = get_log_dir_prefix(log_dir)
 		log_dir_wo_bench = remove_prefix(log_dir, "{}_".format(microbenchmark))
@@ -182,25 +182,20 @@ def analyze_overhead(log_dirs):
 				if '-' not in log_file:
 					continue
 				enable_autocancel = log_file.split('-')[1]
-				client_num = remove_suffix(log_file, ".csv").split('-')[-1]
-				if client_num not in avg_throughput_dict.keys():
-					avg_throughput_dict[client_num] = {"true": {}, "false": {}}
-				if client_num not in p99_latency_dict.keys():
-					p99_latency_dict[client_num] = {"true": {}, "false": {}}
 				benchmark_result_df = pd.read_csv(
 					os.path.join(log_dir_abs, log_file)
 				)
 				benchmark_result_list = benchmark_result_df.values.tolist()
 				for benchmark_result in benchmark_result_list:
 					if benchmark_result[0] == "99th percentile latency" and benchmark_result[1] in RALLY_BENCHMARK_METRICS:
-						p99_latency_dict[client_num][enable_autocancel].setdefault(benchmark_result[1], [])
-						p99_latency_dict[client_num][enable_autocancel][
+						p99_latency_dict[enable_autocancel].setdefault(benchmark_result[1], [])
+						p99_latency_dict[enable_autocancel][
 							benchmark_result[1]].append(
 								(benchmark_result[2], benchmark_result[3])
 							)
 					if benchmark_result[0] == "Mean Throughput" and benchmark_result[1] in RALLY_BENCHMARK_METRICS:
-						avg_throughput_dict[client_num][enable_autocancel].setdefault(benchmark_result[1], [])
-						avg_throughput_dict[client_num][enable_autocancel][
+						avg_throughput_dict[enable_autocancel].setdefault(benchmark_result[1], [])
+						avg_throughput_dict[enable_autocancel][
 							benchmark_result[1]].append(
 								(benchmark_result[2], benchmark_result[3])
 							)
@@ -254,25 +249,24 @@ def show_overhead_result(avg_throughput_dict, p99_latency_dict, placeholder_0, p
 	client_num_list = list(avg_throughput_dict.keys())
 	metrics_list = list(avg_throughput_dict[client_num_list[0]][enable_list[0]].keys())
 	output_dict = {
-		"Enable": [enable for metrics in metrics_list for enable in enable_list],
-		"Throughput (QPS)": [round(np.mean([x[0] for x in avg_throughput_dict[client_num][enable][metrics]]), 2) for metrics in metrics_list for enable in enable_list for client_num in client_num_list],
-		"P99 Latency (ms)": [round(np.mean([x[0] for x in p99_latency_dict[client_num][enable][metrics]]), 2) for metrics in metrics_list for enable in enable_list for client_num in client_num_list]
+		"Metrics": [metrics for client_num in client_num_list for metrics in metrics_list for enable in enable_list],
+		"Enable": [enable for client_num in client_num_list for metrics in metrics_list for enable in enable_list],
+		"Throughput (QPS)": [round(np.mean([x[0] for x in avg_throughput_dict[client_num][enable][metrics]]), 2) for client_num in client_num_list for metrics in metrics_list for enable in enable_list],
+		"P99 Latency (ms)": [round(np.mean([x[0] for x in p99_latency_dict[client_num][enable][metrics]]), 2) for client_num in client_num_list for metrics in metrics_list for enable in enable_list]
 	}
-	output_df = pd.DataFrame(output_dict, index=[metrics for metrics in metrics_list for enable in enable_list])
+	print([client_num for metrics in metrics_list for enable in enable_list for client_num in client_num_list])
+	print(output_dict)
+	output_df = pd.DataFrame(output_dict, index=[client_num for client_num in client_num_list for metrics in metrics_list for enable in enable_list])
 	output_df.to_markdown(buf=sys.stdout)
 	print("")
 
 
 if __name__ == "__main__":
-	if len(sys.argv) < 2:
-		print("Usage: ./log_analyzer.py LOG_DIR1,LOG_DIR2,...")
-
-	log_dirs = sys.argv[1].split(',')
-	if len(log_dirs) == 0:
-		exit()
-
-	microbenchmark = get_log_dir_prefix(log_dirs[0])
-	if microbenchmark == "abnormal_sensitivity" or microbenchmark == "interval_sensitivity":
+	if len(sys.argv) == 2:
+		log_dirs = sys.argv[1].split(',')
+		if len(log_dirs) == 0:
+			exit()
+	
 		avg_throughput_dict, avg_latency_dict, p99_latency_dict, cancel_time_dict, recover_time_dict = analyze_sensitivity(
 			log_dirs
 		)
@@ -280,6 +274,13 @@ if __name__ == "__main__":
 			avg_throughput_dict, avg_latency_dict, p99_latency_dict,
 			cancel_time_dict, recover_time_dict
 		)
-	elif microbenchmark == "rally_benchmark" or microbenchmark == "solr_bench":
-		avg_throughput_dict, p99_latency_dict = analyze_overhead(log_dirs)
-		show_overhead_result(avg_throughput_dict, p99_latency_dict)
+	elif len(sys.argv) == 3:
+		log_dirs = sys.argv[2].split(',')
+		if len(log_dirs) == 0:
+			exit()
+	
+		client_num = sys.argv[1]
+		avg_throughput_dict, p99_latency_dict, placeholder_0, placeholder_1, placeholder_2 = analyze_overhead(client_num, log_dirs)
+		show_overhead_result({client_num: avg_throughput_dict}, {client_num: p99_latency_dict}, placeholder_0, placeholder_1, placeholder_2)
+	else:
+		print("Usage: ./log_analyzer.py (case) LOG_DIR1,LOG_DIR2,...")
