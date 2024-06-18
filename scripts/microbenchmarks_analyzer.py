@@ -251,7 +251,6 @@ def show_overhead_result(avg_throughput_dict, p99_latency_dict, placeholder_0, p
 	enable_list = ["true", "false"]
 	client_num_list = list(avg_throughput_dict.keys())
 	metrics_list = list(avg_throughput_dict[client_num_list[0]][enable_list[0]].keys())
-	print(avg_throughput_dict)
 	output_dict = {
 		"Metrics": [metrics for client_num in client_num_list for metrics in metrics_list for enable in enable_list],
 		"Enable": [enable for client_num in client_num_list for metrics in metrics_list for enable in enable_list],
