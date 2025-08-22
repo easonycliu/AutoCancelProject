@@ -52,8 +52,45 @@ cd c1_cache_evict
 ```
 
 The all related main experiments for case 1 start sequentially.
-After finishing, check result in ${Atropos}/scripts/logs/${START\_DATE}/${CASE}\_${START\_TIME}
 
 Running remain kinds of experiments are the same as main experiments.
 For example, to compare the performance with baselines, there will still be a `launch.sh` under each baseline in ${Atropos}/scripts/baseline
 And for microbenchmark, there will also be a executable file under each microbenchmark in ${Atropos}/scripts/microbenchmark
+
+## Detailed case explain: Elasticsearch request cache contention
+If the request is exactly the same as one of the previous requests, Elasticsearch can return the cached result from the request cache.
+When the request cache is full, new request will be cached with syncronized eviction in the request cache, which comes with overhead, especially when the workload is full.
+In the normal case, inside a request cache there will be lots of entries of cached results, whose eviction won't evict recently added requests, so that future request can make use of the request cache.
+However, when there is a large request, whose result occupies a large space, and keeping querying the same content, then the request cache will be occupied a lot and leaving little space for other requests, causing eager eviction on other request.
+
+When running the `launch.sh` as previous shown, the script will launch:
+1. Elasitcsearch inside a container
+2. A benchmark inside another container, which will send normal requests
+3. A large request that occupies most of the request cache will be sent over `curl`
+
+So it normal to see logs like this repeatly:
+```
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0 | single_node | Throughput: 2034.3
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0 | single_node | Throughput: 2014.6
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0 | single_node | Throughput: 1533.4
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0 | single_node | Throughput: 1969.8
+```
+
+After script finish you will find performance logged under ${Atropos}/scripts/logs/${START\_DATE}/${CASE}\_${START\_TIME}
+You can generate a table with these log data using scripts under ${Atropos}/scripts
+
+```
+cd scripts
+./baselines_analyzer.py c1 ${CASE}\_${START\_TIME}
+```
+
+Where `c1` is the case name, which means the first case.
+`${CASE}\_${START\_TIME}` is the leaf dir name of the log, basing on this name, the scripts can find the dir with conventionally completed absolute path.
