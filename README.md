@@ -89,7 +89,7 @@ You can generate a table with these log data using scripts under ${Atropos}/scri
 
 ```
 cd scripts
-./baselines_analyzer.py c1 ${CASE}\_${START\_TIME}
+python3 ./cases_analyzer.py c1 ${CASE}\_${START\_TIME}
 ```
 
 Where `c1` is the case name, which means the first case.
